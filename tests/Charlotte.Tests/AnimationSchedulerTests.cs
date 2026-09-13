@@ -63,4 +63,31 @@ public class AnimationSchedulerTests
         s.SetHidden(false,TimeSpan.FromSeconds(2)); Assert.Equal(AnimationId.Victory,s.Current);
         s.Tick(TimeSpan.FromMilliseconds(2900)); Assert.Equal(AnimationId.Sleep,s.Current);
     }
+
+    [Fact]
+    public void Idle_enters_rest_at_three_minutes_and_sleep_at_ten()
+    {
+        var s=Create();
+
+        s.Tick(TimeSpan.FromMinutes(3)-TimeSpan.FromMilliseconds(1));
+        Assert.Equal(AnimationId.Idle,s.Current);
+        s.Tick(TimeSpan.FromMinutes(3));
+        Assert.Equal(AnimationId.Rest,s.Current);
+        s.Tick(TimeSpan.FromMinutes(10));
+        Assert.Equal(AnimationId.Sleep,s.Current);
+    }
+
+    [Fact]
+    public void Interaction_wakes_pet_and_restarts_idle_clock()
+    {
+        var s=Create();
+        s.Tick(TimeSpan.FromMinutes(3));
+
+        s.NotifyInteraction(TimeSpan.FromMinutes(4));
+        s.Tick(TimeSpan.FromMinutes(7)-TimeSpan.FromMilliseconds(1));
+
+        Assert.Equal(AnimationId.Idle,s.Current);
+        s.Tick(TimeSpan.FromMinutes(7));
+        Assert.Equal(AnimationId.Rest,s.Current);
+    }
 }

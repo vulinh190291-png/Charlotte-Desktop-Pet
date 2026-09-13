@@ -31,6 +31,11 @@ public sealed class AnimationPresenter : IDisposable
         scheduler.Request(request,Now); renderedIndex=-1; generation++; _=RenderAsync();
     }
 
+    public void NotifyInteraction()
+    {
+        scheduler.NotifyInteraction(Now); renderedIndex=-1; generation++; _=RenderAsync();
+    }
+
     public void SetHidden(bool hidden)
     {
         scheduler.SetHidden(hidden,Now); generation++;

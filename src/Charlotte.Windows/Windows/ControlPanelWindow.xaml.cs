@@ -20,6 +20,7 @@ public partial class ControlPanelWindow : Window
 
     public void RefreshAll()
     {
+        AutoStartCheck.IsChecked=app.AutoStartEnabled;
         TasksPanel.Children.Clear();
         foreach(var item in app.State.Tasks.OrderBy(x=>x.Order))
         {
@@ -45,6 +46,12 @@ public partial class ControlPanelWindow : Window
     private void TaskInput_KeyDown(object s,KeyEventArgs e) { if(e.Key==Key.Enter) AddTask_Click(s,e); else if(e.Key==Key.Escape) TaskInput.Clear(); }
     private void AddSchedule_Click(object s,RoutedEventArgs e) { Try(()=>app.AddSchedule(ScheduleInput.Text,selectedDate,TimeOnly.ParseExact(ScheduleTime.Text,"HH:mm"))); ScheduleInput.Clear(); }
     private void Undo_Click(object s,RoutedEventArgs e)=>app.UndoDelete();
+    private void AutoStart_Click(object s,RoutedEventArgs e)
+    {
+        var result=app.SetAutoStart(AutoStartCheck.IsChecked==true);
+        AutoStartCheck.IsChecked=result.Enabled;
+        if(!result.Success) MessageBox.Show(this,"无法修改当前用户的开机启动设置。","Charlotte",MessageBoxButton.OK,MessageBoxImage.Information);
+    }
     private async void Exit_Click(object s,RoutedEventArgs e)=>await app.RequestExitAsync();
     private void PreviousDay_Click(object s,RoutedEventArgs e) { selectedDate=selectedDate.AddDays(-1); RefreshAll(); }
     private void NextDay_Click(object s,RoutedEventArgs e) { selectedDate=selectedDate.AddDays(1); RefreshAll(); }

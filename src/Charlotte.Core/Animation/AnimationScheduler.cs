@@ -6,12 +6,15 @@ public sealed class AnimationScheduler(AnimationCatalog catalog)
     private AnimationId? pendingPanel;
     private bool hidden;
     private TimeSpan? lastClick;
+    private TimeSpan lastInteraction;
     private int clickLevel;
     public AnimationId Current { get; private set; } = AnimationId.Idle;
     public TimeSpan StartedAt { get; private set; }
 
     public void Request(AnimationRequest request, TimeSpan now)
     {
+        if(request.Kind is AnimationRequestKind.Panel or AnimationRequestKind.Victory or AnimationRequestKind.Click or AnimationRequestKind.DragStart)
+            NotifyInteraction(now);
         if (hidden)
         {
             if (request.Kind == AnimationRequestKind.Victory) pendingVictory = true;
@@ -40,6 +43,12 @@ public sealed class AnimationScheduler(AnimationCatalog catalog)
     public void Tick(TimeSpan now)
     {
         if (hidden) return;
+        var idleFor=now-lastInteraction;
+        if(Current is AnimationId.Idle or AnimationId.Rest)
+        {
+            if(idleFor>=TimeSpan.FromMinutes(10) && Current!=AnimationId.Sleep) { Start(AnimationId.Sleep,now); return; }
+            if(idleFor>=TimeSpan.FromMinutes(3) && Current==AnimationId.Idle) { Start(AnimationId.Rest,now); return; }
+        }
         var clip=catalog.Get(Current);
         if (clip.Loop || now-StartedAt < clip.Duration) return;
         if (Current == AnimationId.DragStart) Start(AnimationId.DragHold,now);
@@ -55,6 +64,12 @@ public sealed class AnimationScheduler(AnimationCatalog catalog)
         }
         if (!hidden) return;
         hidden=false; StartNext(now);
+    }
+
+    public void NotifyInteraction(TimeSpan now)
+    {
+        lastInteraction=now;
+        if(!hidden && Current is AnimationId.Rest or AnimationId.Sleep) Start(AnimationId.Idle,now);
     }
 
     private void RequestClick(TimeSpan now)

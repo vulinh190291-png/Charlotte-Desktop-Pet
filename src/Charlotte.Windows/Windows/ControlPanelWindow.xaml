@@ -4,9 +4,10 @@
  Background="#FFF8F3EC" Foreground="#FF17233D">
  <DockPanel Margin="12">
   <Border DockPanel.Dock="Bottom" BorderBrush="#33A6804C" BorderThickness="0,1,0,0" Padding="0,10,0,0">
-   <Grid><Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+   <Grid><Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="Auto"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
     <Button x:Name="UndoButton" Content="撤销最近删除（5 秒）" Click="Undo_Click" Visibility="Collapsed" Padding="8,4" HorizontalAlignment="Left"/>
-    <Button Grid.Column="1" Content="退出程序" Click="Exit_Click" Padding="12,5" Background="#FF762F3C" Foreground="White"/>
+    <CheckBox x:Name="AutoStartCheck" Grid.Column="1" Content="开机启动" Click="AutoStart_Click" Margin="8,0,14,0" VerticalAlignment="Center"/>
+    <Button Grid.Column="2" Content="退出程序" Click="Exit_Click" Padding="12,5" Background="#FF762F3C" Foreground="White"/>
    </Grid>
   </Border>
   <TabControl x:Name="Tabs" SelectedIndex="1">

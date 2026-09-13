@@ -10,19 +10,37 @@ public partial class App : Application
 {
     private AnimationPresenter? presenter;
     private AppCoordinator? coordinator;
+    private SingleInstanceService? singleInstance;
+    private DiagnosticLog? log;
     protected override async void OnStartup(StartupEventArgs e)
     {
         var startupMonitor = WindowsInterop.MonitorAt(WindowsInterop.Cursor);
         base.OnStartup(e);
+        singleInstance=new SingleInstanceService();
+        var acquired=singleInstance.TryAcquire();
+        if(!acquired)
+        {
+            using var timeout=new CancellationTokenSource(TimeSpan.FromSeconds(2));
+            await singleInstance.NotifyExistingAsync(timeout.Token);
+            singleInstance.Dispose();
+            Shutdown();
+            return;
+        }
+        singleInstance.StartListening();
         var assets=ManifestLoader.Load(System.IO.Path.Combine(AppContext.BaseDirectory,"assets"),System.IO.Path.Combine(AppContext.BaseDirectory,"config","animations.json"));
         var dataRoot=System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),"CharlotteDesktopPet");
+        log=new DiagnosticLog(dataRoot);
+        DispatcherUnhandledException+=(_,args)=>log.Write("dispatcher-unhandled",args.Exception);
+        AppDomain.CurrentDomain.UnhandledException+=(_,args)=>log.Write("domain-unhandled",args.ExceptionObject as Exception);
         var store=new JsonStateStore(dataRoot); var loaded=await store.LoadAsync(default);
         var window=new PetWindow(startupMonitor,e.Args.Contains("--diagnostic-shell",StringComparer.OrdinalIgnoreCase),loaded.Settings.XRatio) { Width=assets.DisplaySizeDip.Width,Height=assets.DisplaySizeDip.Height };
         MainWindow=window;
         presenter=new(window,assets,new FrameCache());
-        coordinator=new(window,presenter,store,loaded.Data,loaded.Settings);
-        window.Closed+=(_,_)=>coordinator.Dispose();
-        window.Show(); presenter.Start();
+        window.Show();
+        coordinator=new(window,presenter,store,loaded.Data,loaded.Settings,log);
+        singleInstance.WakeRequested+=()=>Dispatcher.BeginInvoke(coordinator.Wake);
+        window.Closed+=(_,_)=>{ coordinator.Dispose(); singleInstance.Dispose(); };
+        presenter.Start();
         if(loaded.Warnings.Count>0) MessageBox.Show(string.Join(Environment.NewLine,loaded.Warnings),"Charlotte 数据恢复");
     }
 }
