@@ -30,9 +30,11 @@ public partial class App : Application
             return;
         }
         singleInstance.StartListening();
-        var assets=ManifestLoader.Load(System.IO.Path.Combine(AppContext.BaseDirectory,"assets"),System.IO.Path.Combine(AppContext.BaseDirectory,"config","animations.json"));
         var dataRoot=options.DataRoot;
         log=new DiagnosticLog(dataRoot);
+        var assetLoad=ManifestLoader.LoadResilient(System.IO.Path.Combine(AppContext.BaseDirectory,"assets"),System.IO.Path.Combine(AppContext.BaseDirectory,"config","animations.json"));
+        var assets=assetLoad.Assets;
+        foreach(var issue in assetLoad.Issues) log.Write($"asset-{issue.Code}");
         DispatcherUnhandledException+=(_,args)=>log.Write("dispatcher-unhandled",args.Exception);
         AppDomain.CurrentDomain.UnhandledException+=(_,args)=>log.Write("domain-unhandled",args.ExceptionObject as Exception);
         var store=new JsonStateStore(dataRoot); var loaded=await store.LoadAsync(default);

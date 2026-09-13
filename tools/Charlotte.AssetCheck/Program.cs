@@ -40,7 +40,7 @@ try
             frameCount++;
         }
     }
-    Console.WriteLine($"资产校验通过：{Enum.GetValues<AnimationId>().Length} 个动作，{frameCount} 帧，阶段=placeholder。");
+    Console.WriteLine($"资产校验通过：{Enum.GetValues<AnimationId>().Length} 个动作，{frameCount} 帧，阶段={assets.AssetStage}。");
     return 0;
 }
 catch(Exception error)
