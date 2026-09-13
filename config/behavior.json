@@ -1,0 +1,9 @@
+{
+  "schemaVersion": 1,
+  "clickWindowMs": 1500,
+  "restAfterSeconds": 180,
+  "sleepAfterSeconds": 600,
+  "walkIntervalSeconds": [20, 40],
+  "walkDistanceDip": [24, 72],
+  "walkSpeedDipPerSecond": 24
+}

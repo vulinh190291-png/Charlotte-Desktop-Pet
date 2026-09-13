@@ -1,0 +1,11 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup><TargetFramework>net10.0-windows</TargetFramework><UseWPF>true</UseWPF><IsTestProject>true</IsTestProject><IsPackable>false</IsPackable></PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.8.0" />
+    <PackageReference Include="xunit" Version="2.5.3" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.5.3"><PrivateAssets>all</PrivateAssets></PackageReference>
+    <ProjectReference Include="../../src/Charlotte.Core/Charlotte.Core.csproj" />
+    <ProjectReference Include="../../src/Charlotte.Windows/Charlotte.Windows.csproj" />
+    <Using Include="Xunit" />
+  </ItemGroup>
+</Project>

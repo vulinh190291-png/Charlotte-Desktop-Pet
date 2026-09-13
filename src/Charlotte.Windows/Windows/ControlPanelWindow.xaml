@@ -1,0 +1,30 @@
+<Window x:Class="Charlotte.Windows.Windows.ControlPanelWindow"
+ xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+ Title="Charlotte 管理" Width="380" Height="520" WindowStyle="ToolWindow" ResizeMode="NoResize" Topmost="True"
+ Background="#FFF8F3EC" Foreground="#FF17233D">
+ <DockPanel Margin="12">
+  <Border DockPanel.Dock="Bottom" BorderBrush="#33A6804C" BorderThickness="0,1,0,0" Padding="0,10,0,0">
+   <Grid><Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+    <Button x:Name="UndoButton" Content="撤销最近删除（5 秒）" Click="Undo_Click" Visibility="Collapsed" Padding="8,4" HorizontalAlignment="Left"/>
+    <Button Grid.Column="1" Content="退出程序" Click="Exit_Click" Padding="12,5" Background="#FF762F3C" Foreground="White"/>
+   </Grid>
+  </Border>
+  <TabControl x:Name="Tabs" SelectedIndex="1">
+   <TabItem Header="动作"><WrapPanel x:Name="ActionsPanel" Margin="8"/></TabItem>
+   <TabItem Header="每日任务">
+    <DockPanel Margin="8"><StackPanel DockPanel.Dock="Top">
+     <TextBlock x:Name="ProgressText" FontWeight="SemiBold" Margin="0,0,0,8"/>
+     <DockPanel><Button DockPanel.Dock="Right" Content="添加" Click="AddTask_Click" Padding="10,4"/><TextBox x:Name="TaskInput" MaxLength="120" Margin="0,0,8,0" KeyDown="TaskInput_KeyDown"/></DockPanel>
+    </StackPanel><ScrollViewer VerticalScrollBarVisibility="Auto"><StackPanel x:Name="TasksPanel" Margin="0,10,0,0"/></ScrollViewer></DockPanel>
+   </TabItem>
+   <TabItem Header="日程">
+    <DockPanel Margin="8"><StackPanel DockPanel.Dock="Top">
+     <DockPanel Margin="0,0,0,8"><Button Content="‹" Click="PreviousDay_Click"/><Button Content="今天" Click="Today_Click" Margin="6,0"/><Button Content="›" Click="NextDay_Click"/><TextBlock x:Name="ScheduleDateText" VerticalAlignment="Center" Margin="12,0" FontWeight="SemiBold"/></DockPanel>
+     <Grid><Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="70"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+      <TextBox x:Name="ScheduleInput" Margin="0,0,6,0"/><TextBox x:Name="ScheduleTime" Grid.Column="1" Text="09:00" Margin="0,0,6,0"/><Button Grid.Column="2" Content="添加" Click="AddSchedule_Click" Padding="10,4"/>
+     </Grid>
+    </StackPanel><ScrollViewer VerticalScrollBarVisibility="Auto"><StackPanel x:Name="SchedulesPanel" Margin="0,10,0,0"/></ScrollViewer></DockPanel>
+   </TabItem>
+  </TabControl>
+ </DockPanel>
+</Window>
