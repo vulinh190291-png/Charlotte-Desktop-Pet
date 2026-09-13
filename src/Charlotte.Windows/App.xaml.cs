@@ -40,6 +40,13 @@ public partial class App : Application
         presenter=new(window,assets,new FrameCache());
         window.Show();
         coordinator=new(window,presenter,store,loaded.Data,loaded.Settings,log);
+        window.Closing+=async (_,args)=>
+        {
+            if(coordinator.IsExiting) return;
+            args.Cancel=true;
+            try { await coordinator.RequestExitAsync(); }
+            catch(Exception error) { log.Write("shutdown-failed",error); Shutdown(-1); }
+        };
         singleInstance.WakeRequested+=()=>Dispatcher.BeginInvoke(coordinator.Wake);
         window.Closed+=(_,_)=>{ coordinator.Dispose(); singleInstance.Dispose(); };
         presenter.Start();

@@ -22,23 +22,29 @@ public sealed class AppCoordinator : IDisposable
     private AppSettings settings;
     private readonly AutoStartService autoStart=new(new CurrentUserAutoStartRegistry());
     private readonly SaveQueue saveQueue;
+    private readonly ShutdownSequence shutdown;
     private readonly DispatcherTimer dateTimer=new() { Interval=TimeSpan.FromMinutes(1) };
     private readonly DispatcherTimer visibilityTimer=new() { Interval=TimeSpan.FromMilliseconds(100) };
     private readonly VisibilityPolicy visibilityPolicy=new(TimeSpan.FromMilliseconds(200));
     private readonly long visibilityEpoch=Stopwatch.GetTimestamp();
     private ControlPanelWindow? panel;
-    private bool exiting;
     private bool fullscreenHidden;
     public OrganizerService Organizer { get; }
     public UndoService Undo { get; }
     public OrganizerState State=>state;
     public bool AutoStartEnabled=>settings.AutoStart;
+    public bool IsExiting=>shutdown.IsExiting;
 
     public AppCoordinator(PetWindow pet,AnimationPresenter presenter,IStateStore store,AppData data,AppSettings settings,DiagnosticLog log)
     {
         this.pet=pet; this.presenter=presenter; this.store=store; this.settings=settings; this.log=log;
         state=OrganizerState.Empty(data.LastResetDate); state.Tasks.AddRange(data.Tasks); state.Schedules.AddRange(data.Schedules); state.NextOrder=data.NextOrder;
         saveQueue=new(_=>SaveLatestAsync(),attempt=>TimeSpan.FromMilliseconds(attempt*150),(error,_)=>log.Write("save-failed",error));
+        shutdown=new(async()=>
+        {
+            dateTimer.Stop(); visibilityTimer.Stop();
+            await saveQueue.FlushAsync();
+        },()=>{ panel?.Close(); pet.Close(); });
         Undo=new(state,TimeProvider.System); Organizer=new(state,TimeProvider.System,()=>Undo.ReservedTaskSlots);
         Organizer.TaskCompleted+=_=>{ presenter.Request(AnimationRequest.Victory()); QueueSave(); };
         pet.Clicked+=()=>presenter.Request(AnimationRequest.Click());
@@ -81,12 +87,7 @@ public sealed class AppCoordinator : IDisposable
         panel.Activate();
     }
 
-    public async Task RequestExitAsync()
-    {
-        if(exiting) return; exiting=true; dateTimer.Stop(); visibilityTimer.Stop();
-        await saveQueue.FlushAsync();
-        presenter.Dispose(); panel?.Close(); pet.Close();
-    }
+    public Task RequestExitAsync()=>shutdown.RequestAsync();
 
     public void Wake()
     {
@@ -102,7 +103,7 @@ public sealed class AppCoordinator : IDisposable
     }
     private void QueueSave()
     {
-        if(exiting) return;
+        if(IsExiting) return;
         saveQueue.Request();
     }
     private async Task SaveLatestAsync()
@@ -128,7 +129,7 @@ public sealed class AppCoordinator : IDisposable
     private nint PanelHandle=>panel is null?0:new WindowInteropHelper(panel).Handle;
     private void EvaluateVisibility()
     {
-        if(exiting) return;
+        if(IsExiting) return;
         var fullscreen=ForegroundInterop.IsFullscreenOn(pet.CurrentMonitor.Bounds,PetHandle,PanelHandle);
         var hidden=visibilityPolicy.Observe(fullscreen,Stopwatch.GetElapsedTime(visibilityEpoch));
         SetFullscreenHidden(hidden);
