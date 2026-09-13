@@ -98,6 +98,11 @@ finally { Stop-TestPet $hiddenProcess }
 
 $windowsKey = Get-ItemProperty -LiteralPath 'HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion'
 $commit = (& git -C $projectRoot rev-parse HEAD).Trim()
+$availableMemoryGiB = $null
+$gcMemoryInfoMethod = [System.GC].GetMethods() | Where-Object { $_.Name -eq 'GetGCMemoryInfo' -and $_.GetParameters().Count -eq 0 } | Select-Object -First 1
+if ($null -ne $gcMemoryInfoMethod) {
+    $availableMemoryGiB = [Math]::Round([System.GC]::GetGCMemoryInfo().TotalAvailableMemoryBytes / 1GB,2)
+}
 $result = [ordered]@{
     RecordedAt = (Get-Date).ToString('o')
     Commit = $commit
@@ -105,7 +110,7 @@ $result = [ordered]@{
     Machine = [ordered]@{
         Processor = $env:PROCESSOR_IDENTIFIER
         LogicalProcessors = [Environment]::ProcessorCount
-        AvailableMemoryGiB = [Math]::Round([System.GC]::GetGCMemoryInfo().TotalAvailableMemoryBytes / 1GB,2)
+        AvailableMemoryGiB = $availableMemoryGiB
         Windows = [System.Runtime.InteropServices.RuntimeInformation]::OSDescription
         WindowsDisplayVersion = $windowsKey.DisplayVersion
         WindowsBuild = $windowsKey.CurrentBuildNumber

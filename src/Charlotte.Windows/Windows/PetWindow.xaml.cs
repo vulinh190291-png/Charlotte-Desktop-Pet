@@ -20,6 +20,8 @@ public partial class PetWindow : Window
     private PlacementMode mode;
     private Window? panel;
     private readonly bool diagnosticShell;
+    private readonly DispatcherTimer hitTestTimer=new() { Interval=TimeSpan.FromMilliseconds(16) };
+    private bool clickThrough;
     public event Action? Clicked;
     public event Action? DragStarted;
     public event Action? DragEnded;
@@ -42,14 +44,15 @@ public partial class PetWindow : Window
         Loaded += (_,_) =>
         {
             WindowsInterop.Move(hwnd,new(PositionPolicy.RestoreX(startupXRatio,monitor.WorkArea.Left,monitor.WorkArea.Width,ActualWidth*Scale),monitor.WorkArea.Bottom-280*Scale));
-            RefreshMask(); WindowsInterop.ClickThrough(hwnd,false);
+            RefreshMask(); SetClickThrough(false); hitTestTimer.Start(); UpdateClickThrough();
         };
+        hitTestTimer.Tick+=(_,_)=>UpdateClickThrough();
         MouseLeftButtonDown += OnDown;
         MouseMove += OnMove;
         MouseLeftButtonUp += OnUp;
-        LostMouseCapture += (_,_) => { if (dragging) EndDrag(); };
+        LostMouseCapture += (_,_) => { if (dragging) EndDrag(); Dispatcher.BeginInvoke(UpdateClickThrough); };
         MouseRightButtonUp += (_,e) => { if (OpenManagement != null) OpenManagement(); else TogglePrototypePanel(); e.Handled=true; };
-        Closed += (_,_) => panel?.Close();
+        Closed += (_,_) => { hitTestTimer.Stop(); panel?.Close(); };
     }
     public double SaveXRatio()
     {
@@ -81,6 +84,7 @@ public partial class PetWindow : Window
     }
     private void OnDown(object sender,MouseButtonEventArgs e)
     {
+        SetClickThrough(false);
         var eventPoint=PointToScreen(e.GetPosition(this));
         pressed=new(eventPoint.X,eventPoint.Y); var bounds=PixelBounds;
         grab=new((pressed.Value.X-bounds.Left)/Scale,(pressed.Value.Y-bounds.Top)/Scale);
@@ -88,6 +92,7 @@ public partial class PetWindow : Window
     }
     private void OnMove(object sender,MouseEventArgs e)
     {
+        UpdateClickThrough();
         if (pressed is not PxPoint start || e.LeftButton != MouseButtonState.Pressed) return;
         var eventPoint=PointToScreen(e.GetPosition(this));
         var cursor=new PxPoint(eventPoint.X,eventPoint.Y);
@@ -102,6 +107,7 @@ public partial class PetWindow : Window
         if (dragging) EndDrag();
         pressed=null; ReleaseMouseCapture();
         if (!wasDragging) Clicked?.Invoke();
+        UpdateClickThrough();
         e.Handled=true;
     }
     private void EndDrag()
@@ -114,6 +120,17 @@ public partial class PetWindow : Window
         var next=new PetPlacement(new(b.Left,b.Top),b.Top+280*Scale,mode,monitor.Id)
             .Reflow(monitor.WorkArea,new(b.Width,b.Height),280*Scale);
         WindowsInterop.Move(hwnd,next.Origin); RefreshMask();
+    }
+    private void UpdateClickThrough()
+    {
+        if(hwnd==0 || !IsVisible) return;
+        SetClickThrough(PointerTransparency.ShouldClickThrough(mask,PixelBounds,WindowsInterop.Cursor,Scale,IsMouseCaptured));
+    }
+    private void SetClickThrough(bool enabled)
+    {
+        if(clickThrough==enabled) return;
+        WindowsInterop.ClickThrough(hwnd,enabled);
+        clickThrough=enabled;
     }
     private nint WindowMessage(nint h,int message,nint w,nint l,ref bool handled)
     {
