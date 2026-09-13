@@ -21,9 +21,7 @@ public sealed class AppCoordinator : IDisposable
     private readonly OrganizerState state;
     private AppSettings settings;
     private readonly AutoStartService autoStart=new(new CurrentUserAutoStartRegistry());
-    private readonly SemaphoreSlim saveGate=new(1,1);
-    private readonly object pendingGate=new();
-    private readonly HashSet<Task> pendingSaves=[];
+    private readonly SaveQueue saveQueue;
     private readonly DispatcherTimer dateTimer=new() { Interval=TimeSpan.FromMinutes(1) };
     private readonly DispatcherTimer visibilityTimer=new() { Interval=TimeSpan.FromMilliseconds(100) };
     private readonly VisibilityPolicy visibilityPolicy=new(TimeSpan.FromMilliseconds(200));
@@ -40,6 +38,7 @@ public sealed class AppCoordinator : IDisposable
     {
         this.pet=pet; this.presenter=presenter; this.store=store; this.settings=settings; this.log=log;
         state=OrganizerState.Empty(data.LastResetDate); state.Tasks.AddRange(data.Tasks); state.Schedules.AddRange(data.Schedules); state.NextOrder=data.NextOrder;
+        saveQueue=new(_=>SaveLatestAsync(),attempt=>TimeSpan.FromMilliseconds(attempt*150),(error,_)=>log.Write("save-failed",error));
         Undo=new(state,TimeProvider.System); Organizer=new(state,TimeProvider.System,()=>Undo.ReservedTaskSlots);
         Organizer.TaskCompleted+=_=>{ presenter.Request(AnimationRequest.Victory()); QueueSave(); };
         pet.Clicked+=()=>presenter.Request(AnimationRequest.Click());
@@ -85,10 +84,7 @@ public sealed class AppCoordinator : IDisposable
     public async Task RequestExitAsync()
     {
         if(exiting) return; exiting=true; dateTimer.Stop(); visibilityTimer.Stop();
-        Task[] pending;
-        lock(pendingGate) pending=[..pendingSaves];
-        await Task.WhenAll(pending);
-        await SaveWithRetryAsync();
+        await saveQueue.FlushAsync();
         presenter.Dispose(); panel?.Close(); pet.Close();
     }
 
@@ -107,37 +103,12 @@ public sealed class AppCoordinator : IDisposable
     private void QueueSave()
     {
         if(exiting) return;
-        var task=SaveWithRetryAsync();
-        lock(pendingGate) pendingSaves.Add(task);
-        _=ObserveSaveAsync(task);
-    }
-    private async Task ObserveSaveAsync(Task task)
-    {
-        await task;
-        lock(pendingGate) pendingSaves.Remove(task);
-    }
-    private async Task<bool> SaveWithRetryAsync()
-    {
-        for(var attempt=1;attempt<=3;attempt++)
-        {
-            try { await SaveLatestAsync(); return true; }
-            catch(Exception error)
-            {
-                log.Write("save-failed",error);
-                if(attempt<3) await Task.Delay(TimeSpan.FromMilliseconds(attempt*150));
-            }
-        }
-        return false;
+        saveQueue.Request();
     }
     private async Task SaveLatestAsync()
     {
-        await saveGate.WaitAsync();
-        try
-        {
-            var data=new AppData(1,[..state.Tasks],[..state.Schedules],state.LastResetDate,state.NextOrder);
-            await store.SaveAsync(data,settings with { XRatio=pet.SaveXRatio() },default);
-        }
-        finally { saveGate.Release(); }
+        var data=new AppData(1,[..state.Tasks],[..state.Schedules],state.LastResetDate,state.NextOrder);
+        await store.SaveAsync(data,settings with { XRatio=pet.SaveXRatio() },default);
     }
     private void RefreshPanel()=>panel?.RefreshAll();
     private void ReconcileAutoStart()
@@ -178,5 +149,5 @@ public sealed class AppCoordinator : IDisposable
             presenter.SetHidden(false);
         }
     }
-    public void Dispose() { dateTimer.Stop(); visibilityTimer.Stop(); presenter.Dispose(); saveGate.Dispose(); }
+    public void Dispose() { dateTimer.Stop(); visibilityTimer.Stop(); presenter.Dispose(); }
 }
