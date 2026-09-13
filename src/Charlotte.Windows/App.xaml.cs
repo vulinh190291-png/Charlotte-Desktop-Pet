@@ -12,6 +12,7 @@ public partial class App : Application
     private AppCoordinator? coordinator;
     private SingleInstanceService? singleInstance;
     private DiagnosticLog? log;
+    private bool sessionEnding;
     protected override async void OnStartup(StartupEventArgs e)
     {
         var startupMonitor = WindowsInterop.MonitorAt(WindowsInterop.Cursor);
@@ -42,7 +43,7 @@ public partial class App : Application
         coordinator=new(window,presenter,store,loaded.Data,loaded.Settings,log);
         window.Closing+=async (_,args)=>
         {
-            if(coordinator.IsExiting) return;
+            if(sessionEnding || coordinator.IsExiting) return;
             args.Cancel=true;
             try { await coordinator.RequestExitAsync(); }
             catch(Exception error) { log.Write("shutdown-failed",error); Shutdown(-1); }
@@ -52,5 +53,17 @@ public partial class App : Application
         presenter.Start();
         if(options.StartHidden) { presenter.SetHidden(true); window.Hide(); }
         if(loaded.Warnings.Count>0) MessageBox.Show(string.Join(Environment.NewLine,loaded.Warnings),"Charlotte 数据恢复");
+    }
+
+    protected override void OnSessionEnding(SessionEndingCancelEventArgs e)
+    {
+        sessionEnding=true;
+        if(coordinator is not null)
+        {
+            var result=coordinator.SaveForSessionEnding(TimeSpan.FromSeconds(2));
+            if(result.Status==SessionEndingSaveStatus.TimedOut) log?.Write("session-ending-save-timeout");
+            else if(result.Status==SessionEndingSaveStatus.Failed) log?.Write("session-ending-save-failed",result.Error);
+        }
+        base.OnSessionEnding(e);
     }
 }

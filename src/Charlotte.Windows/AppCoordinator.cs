@@ -16,10 +16,10 @@ public sealed class AppCoordinator : IDisposable
 {
     private readonly PetWindow pet;
     private readonly AnimationPresenter presenter;
-    private readonly IStateStore store;
     private readonly DiagnosticLog log;
     private readonly OrganizerState state;
     private AppSettings settings;
+    private readonly StateSaveGate stateSaveGate;
     private readonly AutoStartService autoStart=new(new CurrentUserAutoStartRegistry());
     private readonly SaveQueue saveQueue;
     private readonly ShutdownSequence shutdown;
@@ -37,7 +37,8 @@ public sealed class AppCoordinator : IDisposable
 
     public AppCoordinator(PetWindow pet,AnimationPresenter presenter,IStateStore store,AppData data,AppSettings settings,DiagnosticLog log)
     {
-        this.pet=pet; this.presenter=presenter; this.store=store; this.settings=settings; this.log=log;
+        this.pet=pet; this.presenter=presenter; this.settings=settings; this.log=log;
+        stateSaveGate=new(store);
         state=OrganizerState.Empty(data.LastResetDate); state.Tasks.AddRange(data.Tasks); state.Schedules.AddRange(data.Schedules); state.NextOrder=data.NextOrder;
         saveQueue=new(_=>SaveLatestAsync(),attempt=>TimeSpan.FromMilliseconds(attempt*150),(error,_)=>log.Write("save-failed",error));
         shutdown=new(async()=>
@@ -90,6 +91,14 @@ public sealed class AppCoordinator : IDisposable
 
     public Task RequestExitAsync()=>shutdown.RequestAsync();
 
+    public SessionEndingSaveResult SaveForSessionEnding(TimeSpan timeout)
+    {
+        dateTimer.Stop(); visibilityTimer.Stop();
+        var snapshot=CreateSnapshot();
+        return new SessionEndingSaver(
+            token=>stateSaveGate.SaveAsync(snapshot.Data,snapshot.Settings,token),timeout).Save();
+    }
+
     public void Wake()
     {
         if(ForegroundInterop.IsFullscreenOn(pet.CurrentMonitor.Bounds,PetHandle,PanelHandle)) return;
@@ -115,9 +124,12 @@ public sealed class AppCoordinator : IDisposable
     }
     private async Task SaveLatestAsync()
     {
-        var data=new AppData(1,[..state.Tasks],[..state.Schedules],state.LastResetDate,state.NextOrder);
-        await store.SaveAsync(data,settings with { XRatio=pet.SaveXRatio() },default);
+        var snapshot=CreateSnapshot();
+        await stateSaveGate.SaveAsync(snapshot.Data,snapshot.Settings,default);
     }
+    private (AppData Data,AppSettings Settings) CreateSnapshot()
+        => (new(1,[..state.Tasks],[..state.Schedules],state.LastResetDate,state.NextOrder),
+            settings with { XRatio=pet.SaveXRatio() });
     private void RefreshPanel()=>panel?.RefreshAll();
     private void ReconcileAutoStart()
     {
