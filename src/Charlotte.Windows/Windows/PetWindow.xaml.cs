@@ -7,6 +7,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 using Charlotte.Core.Geometry;
 using Charlotte.Windows.Interop;
+using Charlotte.Windows.Services;
 namespace Charlotte.Windows.Windows;
 public partial class PetWindow : Window
 {
@@ -25,6 +26,7 @@ public partial class PetWindow : Window
     public event Action? Clicked;
     public event Action? DragStarted;
     public event Action? DragEnded;
+    public event Action? SystemStateChanged;
     public Action? OpenManagement { get; set; }
     public PxRect PixelBounds => WindowsInterop.Bounds(hwnd);
     public MonitorSnapshot CurrentMonitor => WindowsInterop.MonitorAt(new(PixelBounds.Left+PixelBounds.Width/2,PixelBounds.Top+280*Scale));
@@ -134,8 +136,10 @@ public partial class PetWindow : Window
     }
     private nint WindowMessage(nint h,int message,nint w,nint l,ref bool handled)
     {
-        if (message is 0x02E0 or 0x007E or 0x001A)
+        if (DesktopMessagePolicy.ReflowsWindow(message))
             Dispatcher.BeginInvoke(() => { if (!dragging) Reflow(); else RefreshMask(); });
+        if (DesktopMessagePolicy.RefreshesApplicationState(message,w.ToInt64()))
+            Dispatcher.BeginInvoke(() => SystemStateChanged?.Invoke());
         return 0;
     }
     private void TogglePrototypePanel()

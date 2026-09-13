@@ -50,6 +50,7 @@ public sealed class AppCoordinator : IDisposable
         pet.Clicked+=()=>presenter.Request(AnimationRequest.Click());
         pet.DragStarted+=()=>presenter.Request(AnimationRequest.DragStart());
         pet.DragEnded+=()=>{ presenter.Request(AnimationRequest.DragEnd()); QueueSave(); };
+        pet.SystemStateChanged+=OnSystemStateChanged;
         pet.OpenManagement=TogglePanel;
         dateTimer.Tick+=(_,_)=>CheckDate(); dateTimer.Start();
         visibilityTimer.Tick+=(_,_)=>EvaluateVisibility(); visibilityTimer.Start();
@@ -101,6 +102,12 @@ public sealed class AppCoordinator : IDisposable
     {
         if(DateRollover.Apply(state,DateOnly.FromDateTime(DateTime.Now))) { QueueSave(); RefreshPanel(); }
     }
+    private void OnSystemStateChanged()
+    {
+        if(IsExiting) return;
+        CheckDate();
+        EvaluateVisibility();
+    }
     private void QueueSave()
     {
         if(IsExiting) return;
@@ -150,5 +157,9 @@ public sealed class AppCoordinator : IDisposable
             presenter.SetHidden(false);
         }
     }
-    public void Dispose() { dateTimer.Stop(); visibilityTimer.Stop(); presenter.Dispose(); }
+    public void Dispose()
+    {
+        pet.SystemStateChanged-=OnSystemStateChanged;
+        dateTimer.Stop(); visibilityTimer.Stop(); presenter.Dispose();
+    }
 }
