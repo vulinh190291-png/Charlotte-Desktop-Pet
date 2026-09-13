@@ -18,6 +18,16 @@ Windows 10/11 x64 桌面宠物 MVP。当前版本使用满足透明画布、帧�
 
 输出目录为 `artifacts/publish/win-x64`。复制整个目录后直接运行 `Charlotte.Windows.exe`；不要只复制 exe，因为动画和配置保持外置以便替换。
 
+## 性能测量
+
+先发布，再执行：
+
+```powershell
+.\scripts\measure-performance.ps1
+```
+
+脚本默认进行 5 次进程冷启动、30 秒预热、5 分钟 Idle 和 1 分钟隐藏采样，结果写入 `artifacts/performance`。测试资料通过受限的 `--data-dir` 参数隔离，不污染正式用户数据。
+
 ## 操作
 
 - 左键单击角色触发点击反馈，拖动可把角色停留在任意桌面位置。
