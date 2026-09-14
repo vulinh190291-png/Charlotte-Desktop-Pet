@@ -15,6 +15,8 @@ $resultRoot = Join-Path $projectRoot 'artifacts/performance'
 if (-not (Test-Path -LiteralPath $executable)) { throw 'Run scripts/publish.ps1 before measuring performance.' }
 New-Item -ItemType Directory -Path $profileRoot -Force | Out-Null
 New-Item -ItemType Directory -Path $resultRoot -Force | Out-Null
+$commit = (& git -c "safe.directory=$projectRoot" -C $projectRoot rev-parse HEAD).Trim()
+if ($LASTEXITCODE -ne 0 -or [string]::IsNullOrWhiteSpace($commit)) { throw 'Could not resolve the current Git commit.' }
 
 function Start-TestPet([string]$Profile,[bool]$Hidden) {
     New-Item -ItemType Directory -Path $Profile -Force | Out-Null
@@ -97,7 +99,6 @@ try {
 finally { Stop-TestPet $hiddenProcess }
 
 $windowsKey = Get-ItemProperty -LiteralPath 'HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion'
-$commit = (& git -C $projectRoot rev-parse HEAD).Trim()
 $availableMemoryGiB = $null
 $gcMemoryInfoMethod = [System.GC].GetMethods() | Where-Object { $_.Name -eq 'GetGCMemoryInfo' -and $_.GetParameters().Count -eq 0 } | Select-Object -First 1
 if ($null -ne $gcMemoryInfoMethod) {

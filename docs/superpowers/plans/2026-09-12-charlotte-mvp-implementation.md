@@ -342,9 +342,9 @@ public void Battle_coalesces_victory_and_keeps_latest_panel_action()
 
 **Files:** 创建 `Core/Animation/FrameTimeline.cs`、`Windows/Assets/{FrameDecoder,FrameCache}.cs`、`Windows/Services/AnimationPresenter.cs`、`tests/Charlotte.Tests/{FrameTimelineTests,FrameCacheTests}.cs`；修改 PetWindow 和 EffectWindow。
 
-**Interfaces:** `FrameTimeline.IndexAt(AnimationClip clip, TimeSpan elapsed)` 返回 int；`FrameDecoder.DecodeAsync(string path,int pixelWidth,CancellationToken)` 返回 `Task<BitmapSource>`；`FrameCache.GetAsync(string path,uint dpi,CancellationToken)` 返回冻结 BitmapSource；`AnimationPresenter.Render(TimeSpan now)`、`SetHidden(bool)`、`OnDpiChanged(uint)`。
+**Interfaces:** `FrameTimeline.IndexAt(AnimationClip clip, TimeSpan elapsed)` 返回 int；`FrameDecoder.DecodeAsync(string path,int pixelWidth,byte alphaThreshold,CancellationToken)` 返回含冻结 Pbgra32 位图和 Alpha 掩码的 `Task<DecodedFrame>`；`FrameCache.GetFrameAsync(...)` 返回预算内的 `DecodedFrame`；`AnimationPresenter.SetHidden(bool)`、`OnDpiChanged(uint)`。
 
-- [ ] 写卡顿直接跳帧测试，先红灯：
+- [x] 写卡顿直接跳帧测试，先红灯：
 
 ```csharp
 [Fact]
@@ -357,11 +357,11 @@ public void Loop_samples_elapsed_time_without_replaying_frames()
 }
 ```
 
-- [ ] 累加帧时长后二分选择，循环取模、非循环取最后一帧，拒绝零时长。帧只在索引变化时更新，定时器预约下一边界；所有动作共享脚锚点，Walk 位移由单调时间计算。
-- [ ] BitmapDecoder 使用 OnLoad，转 Pbgra32 后 Freeze，后台生成 Alpha 掩码；质量缩放使用 HighQuality。缓存总预算 96MiB，包含缩放位图、掩码和特效；按 stride×height 计费，当前帧固定驻留，其余 LRU，过大单帧拒绝并 fallback，不无限超预算。
-- [ ] DPI 更新与请求设 generation token；旧 DPI/旧动作的解码完成后不得覆盖新画面。清理过时缓存；隐藏时取消排队解码、不触发新解码，已在解码的同步小段结束后丢弃结果。
-- [ ] Sleep 身体与气泡两个时间轴，任何时刻 0/1 个气泡；EffectWindow 跟随主体且完全穿透。剑和特效扩大外边界时 bodyBounds 显示尺度不变。
-- [ ] 验证缓存淘汰、异步乱序、DPI 切换、缺帧 fallback、隐藏后计数不增长；绿灯提交 `feat: render timed PNG animations with bounded cache`。
+- [x] 累加帧时长后二分选择，循环取模、非循环取最后一帧，拒绝零时长。帧只在索引变化时更新，定时器预约下一边界；所有动作共享脚锚点，Walk 位移由单调时间计算。
+- [x] BitmapDecoder 使用 OnLoad，转 Pbgra32 后 Freeze，后台生成 Alpha 掩码；质量缩放使用 HighQuality。缓存总预算 96MiB，包含缩放位图和掩码；矢量特效按需创建、不进入帧缓存；按像素与掩码实际内存计费并采用 LRU，过大单帧拒绝并 fallback，不无限超预算。
+- [x] DPI 更新与请求设 generation token；旧 DPI/旧动作的解码完成后不得覆盖新画面。清理过时缓存；隐藏时取消排队解码、不触发新解码，已在解码的同步小段结束后丢弃结果。
+- [x] Sleep 身体与气泡两个时间轴，任何时刻 0/1 个气泡；EffectWindow 跟随主体且完全穿透。剑和特效扩大外边界时 bodyBounds 显示尺度不变。
+- [x] 验证缓存淘汰、异步乱序、DPI 切换、缺帧 fallback、隐藏后计数不增长；绿灯提交 `feat: render timed PNG animations with bounded cache`。
 
 ## Task 11：统一管理面板与领域接线
 

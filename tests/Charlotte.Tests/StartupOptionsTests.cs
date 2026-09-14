@@ -1,4 +1,5 @@
 using System.IO;
+using Charlotte.Core.Animation;
 using Charlotte.Windows.Services;
 
 namespace Charlotte.Tests;
@@ -48,5 +49,33 @@ public sealed class StartupOptionsTests
     public void Start_hidden_is_rejected_for_normal_user_profile()
     {
         Assert.Throws<ArgumentException>(()=>StartupOptions.Parse(["--start-hidden"],DefaultRoot,ProjectRoot));
+    }
+
+    [Fact]
+    public void Diagnostic_start_action_is_accepted_for_an_isolated_profile()
+    {
+        var testRoot=Path.Combine(ProjectRoot,"artifacts","profiles","effects");
+
+        var options=StartupOptions.Parse(["--data-dir",testRoot,"--diagnostic-shell","--start-action","Battle"],DefaultRoot,ProjectRoot);
+
+        Assert.Equal(AnimationId.Battle,options.StartAction);
+    }
+
+    [Theory]
+    [InlineData("--start-action", "Battle")]
+    [InlineData("--diagnostic-shell", "--start-action")]
+    [InlineData("--start-action", "Unknown")]
+    public void Invalid_diagnostic_start_action_is_rejected(string first,string second)
+    {
+        Assert.Throws<ArgumentException>(()=>StartupOptions.Parse([first,second],DefaultRoot,ProjectRoot));
+    }
+
+    [Fact]
+    public void Unknown_action_is_rejected_even_for_an_isolated_profile()
+    {
+        var testRoot=Path.Combine(ProjectRoot,"artifacts","profiles","effects");
+
+        Assert.Throws<ArgumentException>(()=>StartupOptions.Parse(
+            ["--data-dir",testRoot,"--diagnostic-shell","--start-action","Unknown"],DefaultRoot,ProjectRoot));
     }
 }

@@ -6,6 +6,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 using Charlotte.Core.Geometry;
+using Charlotte.Windows.Assets;
 using Charlotte.Windows.Interop;
 using Charlotte.Windows.Services;
 namespace Charlotte.Windows.Windows;
@@ -27,8 +28,10 @@ public partial class PetWindow : Window
     public event Action? DragStarted;
     public event Action? DragEnded;
     public event Action? SystemStateChanged;
+    public event Action<uint>? PhysicalDpiChanged;
     public Action? OpenManagement { get; set; }
     public PxRect PixelBounds => WindowsInterop.Bounds(hwnd);
+    public uint CurrentDpi=>hwnd==0?startupMonitor.Dpi:Math.Max(96,WindowsInterop.GetDpiForWindow(hwnd));
     public MonitorSnapshot CurrentMonitor => WindowsInterop.MonitorAt(new(PixelBounds.Left+PixelBounds.Width/2,PixelBounds.Top+280*Scale));
     public (double Left,double Right) HorizontalWalkSpaceDip
     {
@@ -80,18 +83,15 @@ public partial class PetWindow : Window
         WindowsInterop.Move(hwnd,new(left,bounds.Top));
     }
     public void ClosePanel() { if(panel?.IsVisible==true) panel.Hide(); }
-    public void ShowFrame(BitmapSource bitmap)
+    public void ShowFrame(DecodedFrame frame)
     {
+        var bitmap=frame.Bitmap;
         if (bitmap.Format != PixelFormats.Pbgra32) bitmap = new FormatConvertedBitmap(bitmap,PixelFormats.Pbgra32,null,0);
-        int stride = bitmap.PixelWidth*4;
-        byte[] bytes=new byte[stride*bitmap.PixelHeight]; bitmap.CopyPixels(bytes,stride,0);
-        for(int i=0;i<bytes.Length;i+=4) if(bytes[i+3]<16) Array.Clear(bytes,i,4);
-        bitmap=BitmapSource.Create(bitmap.PixelWidth,bitmap.PixelHeight,bitmap.DpiX,bitmap.DpiY,PixelFormats.Pbgra32,null,bytes,stride);
-        bitmap.Freeze();
         Body.Children.Clear();
         var image = new Image { Source=bitmap,Stretch=Stretch.Fill };
         RenderOptions.SetBitmapScalingMode(image,BitmapScalingMode.HighQuality);
-        Body.Children.Add(image); Body.UpdateLayout(); RefreshMask();
+        Body.Children.Add(image);
+        mask=frame.Mask;
     }
     private void RefreshMask()
     {
@@ -139,7 +139,7 @@ public partial class PetWindow : Window
         var b=PixelBounds; var monitor=CurrentMonitor;
         var next=new PetPlacement(new(b.Left,b.Top),b.Top+280*Scale,mode,monitor.Id)
             .Reflow(monitor.WorkArea,new(b.Width,b.Height),280*Scale);
-        WindowsInterop.Move(hwnd,next.Origin); RefreshMask();
+        WindowsInterop.Move(hwnd,next.Origin);
     }
     private void UpdateClickThrough()
     {
@@ -155,7 +155,9 @@ public partial class PetWindow : Window
     private nint WindowMessage(nint h,int message,nint w,nint l,ref bool handled)
     {
         if (DesktopMessagePolicy.ReflowsWindow(message))
-            Dispatcher.BeginInvoke(() => { if (!dragging) Reflow(); else RefreshMask(); });
+            Dispatcher.BeginInvoke(() => { if (!dragging) Reflow(); });
+        if(message==0x02E0)
+            Dispatcher.BeginInvoke(()=>PhysicalDpiChanged?.Invoke(CurrentDpi));
         if (DesktopMessagePolicy.RefreshesApplicationState(message,w.ToInt64()))
             Dispatcher.BeginInvoke(() => SystemStateChanged?.Invoke());
         return 0;

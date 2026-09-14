@@ -4,6 +4,7 @@ public sealed class AlphaMask
     private readonly bool[] bits;
     public int Width { get; }
     public int Height { get; }
+    public long EstimatedBytes=>bits.LongLength;
     private AlphaMask(int width, int height) { Width = width; Height = height; bits = new bool[checked(width * height)]; }
     public static AlphaMask Create(byte[] pixels, int width, int height, int stride, byte threshold)
     {

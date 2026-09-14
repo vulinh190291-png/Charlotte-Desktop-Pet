@@ -37,4 +37,13 @@ public sealed class PointerTransparencyTests
     [Fact]
     public void Missing_mask_keeps_the_window_interactive()
         => Assert.False(PointerTransparency.ShouldClickThrough(null,new(0,0,1,1),new(0,0),1,false));
+
+    [Fact]
+    public void Scaled_mask_maps_by_window_extent_instead_of_assuming_one_dip_per_pixel()
+    {
+        var mask=AlphaMask.Create([0,0,0,0, 0,0,0,0, 0,0,0,255],3,1,12,16);
+        var bounds=new PxRect(10,20,6,2);
+
+        Assert.False(PointerTransparency.ShouldClickThrough(mask,bounds,new(15.5,20.5),1,false));
+    }
 }

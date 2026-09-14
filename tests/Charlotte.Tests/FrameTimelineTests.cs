@@ -24,4 +24,23 @@ public class FrameTimelineTests
         var clip=new AnimationClip(AnimationId.Idle,[new("0",0)],true,true,AnimationId.Idle,false);
         Assert.Throws<ArgumentException>(()=>FrameTimeline.IndexAt(clip,TimeSpan.Zero));
     }
+
+    [Theory]
+    [InlineData(50,50)]
+    [InlineData(100,200)]
+    [InlineData(350,50)]
+    public void Loop_schedules_only_the_next_frame_boundary(int elapsedMs,int expectedDelayMs)
+    {
+        var clip=new AnimationClip(AnimationId.Idle,[new("0",100),new("1",200)],true,true,AnimationId.Idle,false);
+
+        Assert.Equal(TimeSpan.FromMilliseconds(expectedDelayMs),FrameTimeline.DelayToNextBoundary(clip,TimeSpan.FromMilliseconds(elapsedMs)));
+    }
+
+    [Fact]
+    public void Completed_nonlooping_clip_has_no_later_frame_boundary()
+    {
+        var clip=new AnimationClip(AnimationId.Victory,[new("0",100),new("1",200)],false,false,AnimationId.Idle,false);
+
+        Assert.Null(FrameTimeline.DelayToNextBoundary(clip,TimeSpan.FromMilliseconds(300)));
+    }
 }

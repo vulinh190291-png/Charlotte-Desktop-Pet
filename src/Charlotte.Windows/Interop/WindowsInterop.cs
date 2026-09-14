@@ -38,4 +38,14 @@ internal static class WindowsInterop
     }
     internal static PxRect Bounds(nint hwnd) { GetWindowRect(hwnd,out var rect); return rect.ToRect(); }
     internal static void Move(nint hwnd,PxPoint p) => SetWindowPos(hwnd,0,(int)Math.Round(p.X),(int)Math.Round(p.Y),0,0,0x0015);
+    internal static void MoveAndResize(nint hwnd,PxRect bounds)
+        => SetWindowPos(hwnd,0,(int)Math.Round(bounds.Left),(int)Math.Round(bounds.Top),(int)Math.Round(bounds.Width),(int)Math.Round(bounds.Height),0x0014);
+    internal static void MakeEffectWindow(nint hwnd)
+    {
+        const long transparent=0x20;
+        const long toolWindow=0x80;
+        const long noActivate=0x08000000;
+        var style=GetWindowLongPtr(hwnd,-20).ToInt64();
+        SetWindowLongPtr(hwnd,-20,(nint)(style|transparent|toolWindow|noActivate));
+    }
 }

@@ -40,8 +40,8 @@ public partial class App : Application
         var store=new JsonStateStore(dataRoot); var loaded=await store.LoadAsync(default);
         var window=new PetWindow(startupMonitor,options.DiagnosticShell,loaded.Settings.XRatio) { Width=assets.DisplaySizeDip.Width,Height=assets.DisplaySizeDip.Height };
         MainWindow=window;
-        presenter=new(window,assets,new FrameCache());
         window.Show();
+        presenter=new(window,assets,new FrameCache());
         coordinator=new(window,presenter,store,loaded.Data,loaded.Settings,log);
         window.Closing+=async (_,args)=>
         {
@@ -53,6 +53,7 @@ public partial class App : Application
         singleInstance.WakeRequested+=()=>Dispatcher.BeginInvoke(coordinator.Wake);
         window.Closed+=(_,_)=>{ coordinator.Dispose(); singleInstance.Dispose(); };
         presenter.Start();
+        if(options.StartAction is AnimationId startAction) presenter.Request(AnimationRequest.Panel(startAction));
         if(options.StartHidden) { presenter.SetHidden(true); window.Hide(); }
         if(loaded.Warnings.Count>0) MessageBox.Show(string.Join(Environment.NewLine,loaded.Warnings),"Charlotte 数据恢复");
     }

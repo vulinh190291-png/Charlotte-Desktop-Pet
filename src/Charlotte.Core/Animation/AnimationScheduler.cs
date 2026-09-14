@@ -224,4 +224,21 @@ public static class FrameTimeline
         }
         return clip.Frames.Count-1;
     }
+
+    public static TimeSpan? DelayToNextBoundary(AnimationClip clip,TimeSpan elapsed)
+    {
+        if(clip.Frames.Count==0 || clip.Frames.Any(x=>x.DurationMs<=0))
+            throw new ArgumentException("Animation frames require positive durations",nameof(clip));
+        var total=clip.Frames.Sum(x=>(double)x.DurationMs);
+        var milliseconds=Math.Max(0,elapsed.TotalMilliseconds);
+        if(!clip.Loop && milliseconds>=total) return null;
+        var position=clip.Loop?milliseconds%total:milliseconds;
+        double edge=0;
+        foreach(var frame in clip.Frames)
+        {
+            edge+=frame.DurationMs;
+            if(position<edge) return TimeSpan.FromMilliseconds(edge-position);
+        }
+        return clip.Loop?TimeSpan.FromMilliseconds(clip.Frames[0].DurationMs):null;
+    }
 }
