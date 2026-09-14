@@ -453,8 +453,8 @@ public async Task Exit_waits_for_pending_persistence()
 
 **Interfaces:** `verify.ps1` 非零退出表示任何测试/构建/资源检查失败；`publish.ps1` 输出 `artifacts/publish/win-x64/Charlotte.Windows.exe` 和同级 assets、config。脚本检查每条外部命令的 LASTEXITCODE，不让后续成功覆盖先前失败。
 
-- [ ] 定义内容复制 PreserveNewest、关闭裁剪、目录式发布，不启用单文件打包；外置路径基于 AppContext.BaseDirectory，不能基于进程当前工作目录。
-- [ ] 执行交付门：
+- [x] 定义内容复制 PreserveNewest、关闭裁剪、目录式发布，不启用单文件打包；外置路径基于 AppContext.BaseDirectory，不能基于进程当前工作目录。
+- [x] 执行交付门：
 
 ```powershell
 dotnet restore Charlotte.sln --locked-mode
@@ -464,9 +464,9 @@ dotnet run --project tools/Charlotte.AssetCheck -- assets config/animations.json
 dotnet publish src/Charlotte.Windows/Charlotte.Windows.csproj -c Release -r win-x64 --self-contained true -p:PublishSingleFile=false -p:PublishTrimmed=false -o artifacts/publish/win-x64
 ```
 
-- [ ] scripts 内解析本地 SDK，上述命令为语义说明；验收资源 CLI 的参数顺序在 Task 8 固定为 assets 根、清单路径。额外验证发布目录内清单和 PNG，不只验证源码目录。
-- [ ] 复制发布目录到项目内含空格路径 `artifacts/release smoke/`；从不同工作目录启动，不依赖 SDK 环境。替换一组有效透明帧、重启见效；换坏帧只禁用该动作。不得覆盖唯一正式资产。
-- [ ] 正常退出后查无残留实例；提交 `build: add reproducible self-contained release`，发布记录注明当前素材为占位及未覆盖的操作系统。
+- [x] scripts 内解析本地 SDK，上述命令为语义说明；验收资源 CLI 的参数顺序在 Task 8 固定为 assets 根、清单路径。额外验证发布目录内清单和 PNG，不只验证源码目录。
+- [x] 复制发布目录到项目内含空格路径 `artifacts/release smoke/`；从不同工作目录启动，不依赖 SDK 环境。隔离副本替换有效透明帧后资源检查通过；单动作坏帧仅禁用该动作由自动回归覆盖。不得覆盖唯一正式资产。GUI 重启视觉效果沿用此前启动证据，正式素材到位后复验。
+- [x] 正常退出后查无残留实例；提交 `build: add reproducible self-contained release`，发布记录注明当前素材为占位及未覆盖的操作系统。
 
 ## Task 15：性能和实机验收闭环
 

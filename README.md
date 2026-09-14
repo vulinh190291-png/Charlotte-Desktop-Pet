@@ -18,6 +18,12 @@ Windows 10/11 x64 桌面宠物 MVP。当前版本使用满足透明画布、帧�
 
 输出目录为 `artifacts/publish/win-x64`。复制整个目录后直接运行 `Charlotte.Windows.exe`；不要只复制 exe，因为动画和配置保持外置以便替换。
 
+发布脚本先在临时目录生成并校验完整产物，再替换正式发布目录，避免旧文件混入新版本。可额外运行下面的发布布局回归；它会刷新含空格路径 `artifacts/release smoke`，从不同工作目录校验资源，并在隔离副本中验证透明帧可替换：
+
+```powershell
+.\scripts\test-publish-layout.ps1
+```
+
 ## 性能测量
 
 先发布，再执行：
