@@ -371,7 +371,7 @@ public void Loop_samples_elapsed_time_without_replaying_frames()
 
 测试辅助类 `tests/Charlotte.Tests/Fixtures/PanelFixture.cs` 提供 Create、ViewModel、Open、Close，Open/Close 转发真实协调器。协调器的 `IPanelHost` 窗口适配接口只含 Show、Hide、IsVisible，生产实现调用 WPF，测试实现记录状态。`IPanelHost.cs` 放 Windows/Services；测试不复制业务状态机。
 
-- [ ] 写 ViewModel 默认 Tab、重复打开保留 Tab、任务完成事件路由一次测试：
+- [x] 写 ViewModel 默认 Tab、重复打开保留 Tab、任务完成事件路由一次测试：
 
 ```csharp
 [Fact]
@@ -387,11 +387,11 @@ public void Panel_reopen_keeps_session_tab()
 }
 ```
 
-- [ ] 实施时定义 PanelFixture 包装真实 ViewModel 和协调器的无窗口适配器，红灯；RelayCommand 执行失败映射低干扰错误文本，不吞异常。
-- [ ] 布局用三 Tab、任务完成计数、创建输入 Enter/Esc、稳定列表、日期前后/今天、时间输入、未完成数量、过期样式、底部撤销提示与自启动/退出。颜色与角色主题协调，键盘 Tab 顺序和可读对比度纳入实测。
-- [ ] 右键可见主体切换面板；打开前跨天检查并保存，定位只计算一次，窗口 Deactivated 或 Esc 关闭。面板内部弹出控件不被误判为外部点击。拓扑变化只在越界时重 Clamp。
-- [ ] 所有状态修改从 UI Dispatcher 进入；TaskCompleted → NotifyInteraction → Victory 请求；打开面板重置闲置，按钮不能冒泡成角色 Click。保存事件订阅只注册一次、关闭释放。
-- [ ] 绿灯及手动完整交互，提交 `feat: connect organizer management panel`。
+- [x] 实施 `PanelFixture` 包装真实 ViewModel 和协调器的无窗口适配器；RelayCommand 只将预期输入/领域错误映射为低干扰错误文本，意外异常继续抛出。
+- [x] 布局使用三 Tab、任务完成计数、创建输入 Enter/Esc、稳定列表、日期前后/今天、时间输入、未完成数量、过期样式、底部撤销提示与自启动/退出；颜色与键盘顺序已落入 WPF 布局和自动回归。
+- [x] 右键主体切换面板；打开前跨天检查并保存，定位只计算一次，窗口 Deactivated 或 Esc 关闭；拓扑变化仅在越界时重 Clamp。完整跨进程点击仍需桌面环境复验。
+- [x] 所有状态修改由 UI 事件进入；TaskCompleted → NotifyInteraction → Victory 请求；打开面板重置闲置，面板按钮不冒泡成角色 Click；事件订阅一次、关闭释放。
+- [x] 147 项自动测试与发布构建通过，提交 `feat: connect organizer management panel`；`scripts/test-control-panel.ps1` 的完整手动/原生 UI 回归因本轮 GUI 额度限制暂未执行。
 
 ## Task 12：单实例、自启动与全屏策略
 

@@ -20,6 +20,12 @@ public class PositionPolicyTests
     public void Panel_flips_to_left_and_clamps_bottom()
         => Assert.Equal(new PxPoint(580,600),PositionPolicy.PlacePanel(new(900,850,100,150),new(300,400),new(0,0,1000,1000),20));
     [Fact]
+    public void Visible_panel_does_not_move_during_topology_refresh()
+        => Assert.Null(PositionPolicy.ClampPanelIfOutside(new(100,200,300,400),new(0,0,1000,800)));
+    [Fact]
+    public void Panel_outside_new_work_area_returns_only_the_clamped_origin()
+        => Assert.Equal(new PxPoint(700,400),PositionPolicy.ClampPanelIfOutside(new(850,500,300,400),new(0,0,1000,800)));
+    [Fact]
     public void Free_placement_preserves_local_baseline()
     {
         var p = new PetPlacement(new(100,200),480,PlacementMode.FreePlaced,"A");

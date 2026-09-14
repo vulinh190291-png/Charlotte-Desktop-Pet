@@ -8,6 +8,7 @@ using Charlotte.Core.Organizer;
 using Charlotte.Core.Persistence;
 using Charlotte.Windows.Interop;
 using Charlotte.Windows.Services;
+using Charlotte.Windows.ViewModels;
 using Charlotte.Windows.Windows;
 
 namespace Charlotte.Windows;
@@ -23,11 +24,14 @@ public sealed class AppCoordinator : IDisposable
     private readonly AutoStartService autoStart=new(new CurrentUserAutoStartRegistry());
     private readonly SaveQueue saveQueue;
     private readonly ShutdownSequence shutdown;
+    private readonly TaskCompletionRouter taskCompletionRouter;
     private readonly DispatcherTimer dateTimer=new() { Interval=TimeSpan.FromMinutes(1) };
     private readonly DispatcherTimer visibilityTimer=new() { Interval=TimeSpan.FromMilliseconds(100) };
     private readonly VisibilityPolicy visibilityPolicy=new(TimeSpan.FromMilliseconds(200));
     private readonly long visibilityEpoch=Stopwatch.GetTimestamp();
     private ControlPanelWindow? panel;
+    private ControlPanelViewModel? panelViewModel;
+    private PanelController? panelController;
     private bool fullscreenHidden;
     public OrganizerService Organizer { get; }
     public UndoService Undo { get; }
@@ -47,11 +51,12 @@ public sealed class AppCoordinator : IDisposable
             await saveQueue.FlushAsync();
         },()=>{ panel?.Close(); pet.Close(); });
         Undo=new(state,TimeProvider.System); Organizer=new(state,TimeProvider.System,()=>Undo.ReservedTaskSlots);
-        Organizer.TaskCompleted+=_=>{ presenter.Request(AnimationRequest.Victory()); QueueSave(); };
+        taskCompletionRouter=new(Organizer,presenter.NotifyInteraction,()=>presenter.Request(AnimationRequest.Victory()));
         pet.Clicked+=()=>presenter.Request(AnimationRequest.Click());
         pet.DragStarted+=()=>presenter.Request(AnimationRequest.DragStart());
         pet.DragEnded+=()=>{ presenter.Request(AnimationRequest.DragEnd()); QueueSave(); };
         pet.SystemStateChanged+=OnSystemStateChanged;
+        pet.DisplayTopologyChanged+=ClampPanelIfNeeded;
         pet.OpenManagement=TogglePanel;
         dateTimer.Tick+=(_,_)=>CheckDate(); dateTimer.Start();
         visibilityTimer.Tick+=(_,_)=>EvaluateVisibility(); visibilityTimer.Start();
@@ -76,22 +81,22 @@ public sealed class AppCoordinator : IDisposable
         return result;
     }
 
-    public void TogglePanel()
+    public void OpenPanel()
     {
-        CheckDate();
-        panel ??= new ControlPanelWindow(this) { Owner=pet,ShowInTaskbar=pet.ShowInTaskbar };
-        if(panel.IsVisible) { panel.Hide(); return; }
-        presenter.SetPanelOpen(true);
-        panel.RefreshAll(); panel.Show();
+        EnsurePanel();
+        if(!panelController!.Open()) return;
         var scale=Math.Max(96,WindowsInterop.GetDpiForWindow(new WindowInteropHelper(pet).Handle))/96.0;
-        var position=PositionPolicy.PlacePanel(pet.PixelBounds,new(panel.Width*scale,panel.Height*scale),pet.CurrentMonitor.WorkArea,12*scale);
+        var position=PositionPolicy.PlacePanel(pet.PixelBounds,new(panel!.Width*scale,panel.Height*scale),pet.CurrentMonitor.WorkArea,12*scale);
         WindowsInterop.Move(new WindowInteropHelper(panel).Handle,position);
         panel.Activate();
     }
 
-    internal void OnPanelVisibilityChanged(bool visible)
+    public void ClosePanel()=>panelController?.Close();
+
+    public void TogglePanel()
     {
-        if(!IsExiting) presenter.SetPanelOpen(visible);
+        if(panel?.IsVisible==true) ClosePanel();
+        else OpenPanel();
     }
 
     public Task RequestExitAsync()=>shutdown.RequestAsync();
@@ -135,7 +140,20 @@ public sealed class AppCoordinator : IDisposable
     private (AppData Data,AppSettings Settings) CreateSnapshot()
         => (new(1,[..state.Tasks],[..state.Schedules],state.LastResetDate,state.NextOrder),
             settings with { XRatio=pet.SaveXRatio() });
-    private void RefreshPanel()=>panel?.RefreshAll();
+    private void RefreshPanel()=>panelViewModel?.Refresh();
+    private void EnsurePanel()
+    {
+        if(panelController is not null) return;
+        panelViewModel=new(state,Organizer,Undo,TimeProvider.System,RequestAction,QueueSave);
+        panel=new(panelViewModel,()=>AutoStartEnabled,SetAutoStart,RequestExitAsync,ClosePanel)
+        {
+            Owner=pet,
+            ShowInTaskbar=pet.ShowInTaskbar
+        };
+        panelController=new(panel,panelViewModel,
+            ()=>{ CheckDate(); panelViewModel.Refresh(); },
+            visible=>{ if(!IsExiting) presenter.SetPanelOpen(visible); });
+    }
     private void ReconcileAutoStart()
     {
         try
@@ -148,6 +166,14 @@ public sealed class AppCoordinator : IDisposable
             QueueSave();
         }
         catch(Exception error) { log.Write("autostart-read-failed",error); }
+    }
+    private void ClampPanelIfNeeded()
+    {
+        if(panel?.IsVisible!=true) return;
+        var handle=new WindowInteropHelper(panel).Handle;
+        var bounds=WindowsInterop.Bounds(handle);
+        var clamped=PositionPolicy.ClampPanelIfOutside(bounds,pet.CurrentMonitor.WorkArea);
+        if(clamped is PxPoint position) WindowsInterop.Move(handle,position);
     }
     private nint PetHandle=>new WindowInteropHelper(pet).Handle;
     private nint PanelHandle=>panel is null?0:new WindowInteropHelper(panel).Handle;
@@ -164,7 +190,7 @@ public sealed class AppCoordinator : IDisposable
         fullscreenHidden=hidden;
         if(hidden)
         {
-            panel?.Hide();
+            ClosePanel();
             presenter.SetHidden(true);
             pet.Hide();
         }
@@ -177,6 +203,7 @@ public sealed class AppCoordinator : IDisposable
     public void Dispose()
     {
         pet.SystemStateChanged-=OnSystemStateChanged;
-        dateTimer.Stop(); visibilityTimer.Stop(); presenter.Dispose();
+        pet.DisplayTopologyChanged-=ClampPanelIfNeeded;
+        dateTimer.Stop(); visibilityTimer.Stop(); taskCompletionRouter.Dispose(); presenter.Dispose();
     }
 }

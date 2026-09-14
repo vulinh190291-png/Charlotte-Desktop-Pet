@@ -28,6 +28,7 @@ public partial class PetWindow : Window
     public event Action? DragStarted;
     public event Action? DragEnded;
     public event Action? SystemStateChanged;
+    public event Action? DisplayTopologyChanged;
     public event Action<uint>? PhysicalDpiChanged;
     public Action? OpenManagement { get; set; }
     public PxRect PixelBounds => WindowsInterop.Bounds(hwnd);
@@ -155,7 +156,7 @@ public partial class PetWindow : Window
     private nint WindowMessage(nint h,int message,nint w,nint l,ref bool handled)
     {
         if (DesktopMessagePolicy.ReflowsWindow(message))
-            Dispatcher.BeginInvoke(() => { if (!dragging) Reflow(); });
+            Dispatcher.BeginInvoke(() => { if (!dragging) Reflow(); DisplayTopologyChanged?.Invoke(); });
         if(message==0x02E0)
             Dispatcher.BeginInvoke(()=>PhysicalDpiChanged?.Invoke(CurrentDpi));
         if (DesktopMessagePolicy.RefreshesApplicationState(message,w.ToInt64()))

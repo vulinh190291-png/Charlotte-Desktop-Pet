@@ -10,19 +10,20 @@
     <Button Grid.Column="2" Content="退出程序" Click="Exit_Click" Padding="12,5" Background="#FF762F3C" Foreground="White"/>
    </Grid>
   </Border>
-  <TabControl x:Name="Tabs" SelectedIndex="1">
+  <TextBlock x:Name="ErrorText" Text="{Binding ErrorText}" DockPanel.Dock="Bottom" Foreground="#FF8B2635" TextWrapping="Wrap" Margin="2,8,2,0"/>
+  <TabControl x:Name="Tabs" SelectedIndex="1" SelectionChanged="Tabs_SelectionChanged">
    <TabItem Header="动作"><WrapPanel x:Name="ActionsPanel" Margin="8"/></TabItem>
    <TabItem Header="每日任务">
     <DockPanel Margin="8"><StackPanel DockPanel.Dock="Top">
      <TextBlock x:Name="ProgressText" FontWeight="SemiBold" Margin="0,0,0,8"/>
-     <DockPanel><Button DockPanel.Dock="Right" Content="添加" Click="AddTask_Click" Padding="10,4"/><TextBox x:Name="TaskInput" MaxLength="120" Margin="0,0,8,0" KeyDown="TaskInput_KeyDown"/></DockPanel>
+     <DockPanel><Button DockPanel.Dock="Right" Content="添加" Click="AddTask_Click" Padding="10,4"/><TextBox x:Name="TaskInput" Text="{Binding TaskInput,UpdateSourceTrigger=PropertyChanged}" AutomationProperties.Name="每日任务标题" MaxLength="120" Margin="0,0,8,0" KeyDown="TaskInput_KeyDown"/></DockPanel>
     </StackPanel><ScrollViewer VerticalScrollBarVisibility="Auto"><StackPanel x:Name="TasksPanel" Margin="0,10,0,0"/></ScrollViewer></DockPanel>
    </TabItem>
    <TabItem Header="日程">
     <DockPanel Margin="8"><StackPanel DockPanel.Dock="Top">
      <DockPanel Margin="0,0,0,8"><Button Content="‹" Click="PreviousDay_Click"/><Button Content="今天" Click="Today_Click" Margin="6,0"/><Button Content="›" Click="NextDay_Click"/><TextBlock x:Name="ScheduleDateText" VerticalAlignment="Center" Margin="12,0" FontWeight="SemiBold"/></DockPanel>
      <Grid><Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="70"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
-      <TextBox x:Name="ScheduleInput" Margin="0,0,6,0"/><TextBox x:Name="ScheduleTime" Grid.Column="1" Text="09:00" Margin="0,0,6,0"/><Button Grid.Column="2" Content="添加" Click="AddSchedule_Click" Padding="10,4"/>
+      <TextBox x:Name="ScheduleInput" Text="{Binding ScheduleInput,UpdateSourceTrigger=PropertyChanged}" AutomationProperties.Name="日程标题" Margin="0,0,6,0" KeyDown="ScheduleInput_KeyDown"/><TextBox x:Name="ScheduleTime" Grid.Column="1" Text="{Binding ScheduleTime,UpdateSourceTrigger=PropertyChanged}" AutomationProperties.Name="日程时间，24 小时制" Margin="0,0,6,0" KeyDown="ScheduleInput_KeyDown"/><Button Grid.Column="2" Content="添加" Click="AddSchedule_Click" Padding="10,4"/>
      </Grid>
     </StackPanel><ScrollViewer VerticalScrollBarVisibility="Auto"><StackPanel x:Name="SchedulesPanel" Margin="0,10,0,0"/></ScrollViewer></DockPanel>
    </TabItem>

@@ -21,6 +21,11 @@ public static class PositionPolicy
         double x = pet.Right+gap+panel.Width <= area.Right ? pet.Right+gap : pet.Left-gap-panel.Width;
         return Clamp(new(x,pet.Bottom-panel.Height),panel,area);
     }
+    public static PxPoint? ClampPanelIfOutside(PxRect panel,PxRect area)
+    {
+        if(panel.Left>=area.Left && panel.Top>=area.Top && panel.Right<=area.Right && panel.Bottom<=area.Bottom) return null;
+        return Clamp(new(panel.Left,panel.Top),new(panel.Width,panel.Height),area);
+    }
 }
 public enum PlacementMode { GroundAnchored, FreePlaced }
 public record PetPlacement(PxPoint Origin,double Baseline,PlacementMode Mode,string MonitorId)

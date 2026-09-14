@@ -1,61 +1,145 @@
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Threading;
+using System.ComponentModel;
 using Charlotte.Core.Animation;
+using Charlotte.Windows.Services;
+using Charlotte.Windows.ViewModels;
 
 namespace Charlotte.Windows.Windows;
 
-public partial class ControlPanelWindow : Window
+public partial class ControlPanelWindow : Window,IPanelHost
 {
-    private readonly AppCoordinator app;
-    private DateOnly selectedDate=DateOnly.FromDateTime(DateTime.Now);
-    public ControlPanelWindow(AppCoordinator app)
+    private readonly ControlPanelViewModel viewModel;
+    private readonly Func<bool> readAutoStart;
+    private readonly Func<bool,AutoStartResult> setAutoStart;
+    private readonly Func<Task> requestExit;
+    private readonly Action requestClose;
+    private readonly DispatcherTimer refreshTimer=new() { Interval=TimeSpan.FromMilliseconds(250) };
+    private bool initialized;
+
+    public ControlPanelWindow(
+        ControlPanelViewModel viewModel,
+        Func<bool> readAutoStart,
+        Func<bool,AutoStartResult> setAutoStart,
+        Func<Task> requestExit,
+        Action requestClose)
     {
-        this.app=app; InitializeComponent();
+        this.viewModel=viewModel;
+        this.readAutoStart=readAutoStart;
+        this.setAutoStart=setAutoStart;
+        this.requestExit=requestExit;
+        this.requestClose=requestClose;
+        InitializeComponent();
+        DataContext=viewModel;
+        Tabs.SelectedIndex=(int)viewModel.SelectedTab;
+        initialized=true;
         foreach(var item in new[] { ("散步",AnimationId.Walk),("休息",AnimationId.Rest),("睡觉",AnimationId.Sleep),("战斗",AnimationId.Battle),("胜利",AnimationId.Victory) })
-        { var button=new Button { Content=item.Item1,Margin=new(4),Padding=new(12,7,12,7) }; button.Click+=(_,_)=>app.RequestAction(item.Item2); ActionsPanel.Children.Add(button); }
-        KeyDown+=(_,e)=>{ if(e.Key==Key.Escape) Hide(); };
-        Deactivated+=(_,_)=>Hide();
-        IsVisibleChanged+=(_,_)=>app.OnPanelVisibilityChanged(IsVisible);
+        {
+            var button=new Button { Content=item.Item1,Margin=new(4),Padding=new(12,7,12,7),Command=viewModel.RequestActionCommand,CommandParameter=item.Item2 };
+            ActionsPanel.Children.Add(button);
+        }
+        KeyDown+=(_,e)=>{ if(e.Key==Key.Escape) requestClose(); };
+        Deactivated+=(_,_)=>Dispatcher.BeginInvoke(() =>
+        {
+            if(!OwnedWindows.Cast<Window>().Any(x=>x.IsVisible)) requestClose();
+        });
+        IsVisibleChanged+=(_,_)=>
+        {
+            if(IsVisible) { RefreshAll(); refreshTimer.Start(); }
+            else refreshTimer.Stop();
+        };
+        viewModel.Changed+=RefreshAll;
+        viewModel.PropertyChanged+=OnViewModelPropertyChanged;
+        refreshTimer.Tick+=(_,_)=>RefreshTransientState();
+        Closed+=(_,_)=>
+        {
+            refreshTimer.Stop();
+            viewModel.Changed-=RefreshAll;
+            viewModel.PropertyChanged-=OnViewModelPropertyChanged;
+        };
     }
 
     public void RefreshAll()
     {
-        AutoStartCheck.IsChecked=app.AutoStartEnabled;
+        if(Tabs.SelectedIndex!=(int)viewModel.SelectedTab) Tabs.SelectedIndex=(int)viewModel.SelectedTab;
+        AutoStartCheck.IsChecked=readAutoStart();
+        ProgressText.Text=viewModel.ProgressText;
+        RefreshTransientState();
+        ScheduleDateText.Text=viewModel.ScheduleDateText;
+
         TasksPanel.Children.Clear();
-        foreach(var item in app.State.Tasks.OrderBy(x=>x.Order))
+        foreach(var item in viewModel.Tasks)
         {
             var row=new DockPanel { Margin=new(0,3,0,3) };
-            var delete=new Button { Content="删除",Padding=new(6,2,6,2),Tag=item.Id }; delete.Click+=(_,_)=>app.DeleteTask((Guid)delete.Tag); DockPanel.SetDock(delete,Dock.Right); row.Children.Add(delete);
+            var delete=new Button { Content="删除",Padding=new(6,2,6,2),Command=viewModel.DeleteTaskCommand,CommandParameter=item.Id };
+            DockPanel.SetDock(delete,Dock.Right);
+            row.Children.Add(delete);
             var check=new CheckBox { Content=item.Title,IsChecked=item.IsCompleted,VerticalAlignment=VerticalAlignment.Center,Tag=item.Id };
-            check.Click+=(_,_)=>app.SetTask((Guid)check.Tag,check.IsChecked==true); row.Children.Add(check); TasksPanel.Children.Add(row);
+            check.Click+=(_,_)=>viewModel.SetTaskCommand.Execute(new TaskCompletionChange((Guid)check.Tag,check.IsChecked==true));
+            row.Children.Add(check);
+            TasksPanel.Children.Add(row);
         }
-        ProgressText.Text=$"已完成 {app.State.Tasks.Count(x=>x.IsCompleted)} / {app.State.Tasks.Count}（最多 7 条）";
-        UndoButton.Visibility=app.Undo.ExpiresIn>TimeSpan.Zero?Visibility.Visible:Visibility.Collapsed;
-        ScheduleDateText.Text=selectedDate==DateOnly.FromDateTime(DateTime.Now)?$"{selectedDate:yyyy-MM-dd} · 今天":selectedDate.ToString("yyyy-MM-dd");
+
         SchedulesPanel.Children.Clear();
-        foreach(var item in app.Organizer.ForDate(selectedDate))
+        foreach(var item in viewModel.Schedules)
         {
             var row=new DockPanel { Margin=new(0,3,0,3) };
-            var delete=new Button { Content="删除",Padding=new(6,2,6,2),Tag=item.Id }; delete.Click+=(_,_)=>app.DeleteSchedule((Guid)delete.Tag); DockPanel.SetDock(delete,Dock.Right); row.Children.Add(delete);
+            var delete=new Button { Content="删除",Padding=new(6,2,6,2),Command=viewModel.DeleteScheduleCommand,CommandParameter=item.Id };
+            DockPanel.SetDock(delete,Dock.Right);
+            row.Children.Add(delete);
             var check=new CheckBox { Content=$"{item.Time:HH\\:mm}  {item.Title}",IsChecked=item.IsCompleted,VerticalAlignment=VerticalAlignment.Center,Tag=item.Id };
-            if(app.Organizer.IsOverdue(item,DateTime.Now)) check.Foreground=System.Windows.Media.Brushes.Firebrick;
-            check.Click+=(_,_)=>app.SetSchedule((Guid)check.Tag,check.IsChecked==true); row.Children.Add(check); SchedulesPanel.Children.Add(row);
+            if(viewModel.IsOverdue(item)) check.Foreground=System.Windows.Media.Brushes.Firebrick;
+            check.Click+=(_,_)=>viewModel.SetScheduleCommand.Execute(new ScheduleCompletionChange((Guid)check.Tag,check.IsChecked==true));
+            row.Children.Add(check);
+            SchedulesPanel.Children.Add(row);
         }
     }
-    private void AddTask_Click(object s,RoutedEventArgs e) { Try(()=>app.AddTask(TaskInput.Text)); TaskInput.Clear(); }
-    private void TaskInput_KeyDown(object s,KeyEventArgs e) { if(e.Key==Key.Enter) AddTask_Click(s,e); else if(e.Key==Key.Escape) TaskInput.Clear(); }
-    private void AddSchedule_Click(object s,RoutedEventArgs e) { Try(()=>app.AddSchedule(ScheduleInput.Text,selectedDate,TimeOnly.ParseExact(ScheduleTime.Text,"HH:mm"))); ScheduleInput.Clear(); }
-    private void Undo_Click(object s,RoutedEventArgs e)=>app.UndoDelete();
-    private void AutoStart_Click(object s,RoutedEventArgs e)
+
+    private void AddTask_Click(object sender,RoutedEventArgs e)=>viewModel.AddTaskCommand.Execute(null);
+
+    private void TaskInput_KeyDown(object sender,KeyEventArgs e)
     {
-        var result=app.SetAutoStart(AutoStartCheck.IsChecked==true);
-        AutoStartCheck.IsChecked=result.Enabled;
-        if(!result.Success) MessageBox.Show(this,"无法修改当前用户的开机启动设置。","Charlotte",MessageBoxButton.OK,MessageBoxImage.Information);
+        if(e.Key==Key.Enter) { viewModel.AddTaskCommand.Execute(null); e.Handled=true; }
+        else if(e.Key==Key.Escape) { viewModel.TaskInput=string.Empty; e.Handled=true; }
     }
-    private async void Exit_Click(object s,RoutedEventArgs e)=>await app.RequestExitAsync();
-    private void PreviousDay_Click(object s,RoutedEventArgs e) { selectedDate=selectedDate.AddDays(-1); RefreshAll(); }
-    private void NextDay_Click(object s,RoutedEventArgs e) { selectedDate=selectedDate.AddDays(1); RefreshAll(); }
-    private void Today_Click(object s,RoutedEventArgs e) { selectedDate=DateOnly.FromDateTime(DateTime.Now); RefreshAll(); }
-    private void Try(Action action) { try { action(); } catch(Exception error) { MessageBox.Show(this,error.Message,"Charlotte",MessageBoxButton.OK,MessageBoxImage.Information); } }
+
+    private void AddSchedule_Click(object sender,RoutedEventArgs e)=>viewModel.AddScheduleCommand.Execute(null);
+
+    private void ScheduleInput_KeyDown(object sender,KeyEventArgs e)
+    {
+        if(e.Key==Key.Enter) { viewModel.AddScheduleCommand.Execute(null); e.Handled=true; }
+        else if(e.Key==Key.Escape) { viewModel.ScheduleInput=string.Empty; viewModel.ScheduleTime="09:00"; e.Handled=true; }
+    }
+
+    private void Undo_Click(object sender,RoutedEventArgs e)=>viewModel.UndoCommand.Execute(null);
+
+    private void AutoStart_Click(object sender,RoutedEventArgs e)
+    {
+        var result=setAutoStart(AutoStartCheck.IsChecked==true);
+        AutoStartCheck.IsChecked=result.Enabled;
+        if(!result.Success) viewModel.ReportError("无法修改当前用户的开机启动设置。");
+    }
+
+    private async void Exit_Click(object sender,RoutedEventArgs e)=>await requestExit();
+    private void PreviousDay_Click(object sender,RoutedEventArgs e)=>viewModel.PreviousDayCommand.Execute(null);
+    private void NextDay_Click(object sender,RoutedEventArgs e)=>viewModel.NextDayCommand.Execute(null);
+    private void Today_Click(object sender,RoutedEventArgs e)=>viewModel.TodayCommand.Execute(null);
+
+    private void Tabs_SelectionChanged(object sender,SelectionChangedEventArgs e)
+    {
+        if(initialized && Tabs.SelectedIndex is >=0 and <=2) viewModel.SelectedTab=(PanelTab)Tabs.SelectedIndex;
+    }
+
+    private void RefreshTransientState()
+    {
+        UndoButton.Content=viewModel.UndoText;
+        UndoButton.Visibility=viewModel.CanUndo?Visibility.Visible:Visibility.Collapsed;
+    }
+
+    private void OnViewModelPropertyChanged(object? sender,PropertyChangedEventArgs e)
+    {
+        if(e.PropertyName==nameof(ControlPanelViewModel.ErrorText)) ErrorText.Text=viewModel.ErrorText??string.Empty;
+    }
 }
