@@ -47,6 +47,25 @@ public class PersistenceTests
         Assert.NotEmpty(Directory.GetFiles(files.Path,"data.corrupt.*.json"));
     }
 
+    [Fact]
+    public async Task Corrupt_current_and_backup_files_use_defaults_without_deleting_evidence()
+    {
+        using var files=TestDirectory.Create();
+        var current=System.IO.Path.Combine(files.Path,"data.json");
+        var backup=System.IO.Path.Combine(files.Path,"backups","data.previous.json");
+        Directory.CreateDirectory(System.IO.Path.GetDirectoryName(backup)!);
+        await File.WriteAllTextAsync(current,"{current-broken");
+        await File.WriteAllTextAsync(backup,"{backup-broken");
+
+        var loaded=await new JsonStateStore(files.Path).LoadAsync(default);
+
+        Assert.Empty(loaded.Data.Tasks);
+        Assert.True(File.Exists(current));
+        Assert.True(File.Exists(backup));
+        Assert.NotEmpty(Directory.GetFiles(files.Path,"data.corrupt.*.json"));
+        Assert.Contains(loaded.Warnings,x=>x.Contains("安全默认值"));
+    }
+
     private sealed class TestDirectory : IDisposable
     {
         public string Path { get; }

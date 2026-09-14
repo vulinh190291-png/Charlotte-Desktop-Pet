@@ -42,7 +42,7 @@ public sealed class DiagnosticLog
     private void Rotate()
     {
         var third=path+".3"; var second=path+".2"; var first=path+".1";
-        if(File.Exists(second)) File.Move(second,third,true);
+        if(File.Exists(third)) File.Delete(third);
         if(File.Exists(first)) File.Move(first,second,true);
         File.Move(path,first,true);
     }

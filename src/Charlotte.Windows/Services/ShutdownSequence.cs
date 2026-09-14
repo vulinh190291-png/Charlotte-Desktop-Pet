@@ -5,6 +5,7 @@ public sealed class ShutdownSequence
     private readonly Func<Task> flush;
     private readonly Action finalize;
     private readonly Lazy<Task> running;
+    private readonly object gate=new();
 
     public ShutdownSequence(Func<Task> flush,Action finalize)
     {
@@ -13,13 +14,26 @@ public sealed class ShutdownSequence
         running=new(RunAsync);
     }
 
-    public bool IsExiting=>running.IsValueCreated;
+    public bool IsExiting { get { lock(gate) return running.IsValueCreated; } }
 
-    public Task RequestAsync()=>running.Value;
+    public Task RequestAsync()
+    {
+        lock(gate) return running.Value;
+    }
+
+    public bool TryRun(Action intent)
+    {
+        lock(gate)
+        {
+            if(running.IsValueCreated) return false;
+            intent();
+            return true;
+        }
+    }
 
     private async Task RunAsync()
     {
-        await flush();
-        finalize();
+        try { await flush(); }
+        finally { finalize(); }
     }
 }

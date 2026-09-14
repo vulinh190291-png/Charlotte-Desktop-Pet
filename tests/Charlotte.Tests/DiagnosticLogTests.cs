@@ -22,4 +22,29 @@ public sealed class DiagnosticLogTests
         }
         finally { if(Directory.Exists(root)) Directory.Delete(root,true); }
     }
+
+    [Fact]
+    public void Rotation_keeps_only_three_two_megabyte_log_files()
+    {
+        var root=Path.Combine(Path.GetTempPath(),"CharlotteTests",Guid.NewGuid().ToString("N"));
+        var directory=Path.Combine(root,"logs");
+        var path=Path.Combine(directory,"charlotte.log");
+        try
+        {
+            Directory.CreateDirectory(directory);
+            var log=new DiagnosticLog(root);
+            for(var rotation=0;rotation<3;rotation++)
+            {
+                File.WriteAllBytes(path,new byte[2*1024*1024]);
+                log.Write("rotation-check");
+            }
+
+            Assert.Equal(3,Directory.GetFiles(directory,"charlotte.log*").Length);
+            Assert.True(File.Exists(path));
+            Assert.True(File.Exists(path+".1"));
+            Assert.True(File.Exists(path+".2"));
+            Assert.False(File.Exists(path+".3"));
+        }
+        finally { if(Directory.Exists(root)) Directory.Delete(root,true); }
+    }
 }

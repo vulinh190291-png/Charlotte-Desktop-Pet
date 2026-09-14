@@ -426,7 +426,7 @@ public void A_short_fullscreen_transition_does_not_hide_pet()
 
 测试辅助类 `tests/Charlotte.Tests/Fixtures/ShutdownFixture.cs` 的 CreateWithBlockedWriter 创建真实协调器和 SaveQueue，写入器实现 Task 7 的 IAtomicFileWriter 并等待 TaskCompletionSource；ReleaseWriter 完成该信号；ResourcesDisposed 由可注入资源释放回调置 true。该 fixture 的 Arrange 先排入一个修改快照，确保测试确实覆盖待写数据。
 
-- [ ] 写正常退出等待最新快照测试及保存失败维持 dirty 状态测试，使用 TaskCompletionSource 控制 I/O，先红灯：
+- [x] 写正常退出等待最新快照测试及保存失败维持 dirty 状态测试，使用 TaskCompletionSource 控制 I/O，先红灯：
 
 ```csharp
 [Fact]
@@ -441,10 +441,11 @@ public async Task Exit_waits_for_pending_persistence()
 }
 ```
 
-- [ ] 记录结构化事件码、版本、异常类型/HResult，不记录用户正文和含正文的异常 Message。日志 3×2MiB 轮换；损坏文件隔离保留，不自动清除。
-- [ ] 正常退出保存有界重试完成后退出；磁盘完全不可写时无法保证落盘，写可写位置的恢复快照需仍在运行数据根内，若也失败则保留明确错误日志/状态而不虚称已保存。实机报告必须记录该客观限制。
-- [ ] DispatcherUnhandledException、AppDomain 未处理异常尽力记录和刷新；严重状态错误不继续运行。会话结束时尽力保存但不阻止系统无限期关机。释放注册表监听、WinEventHook、鼠标捕获、定时器、管道和 mutex。
-- [ ] 红绿后故障注入验证单动作坏帧、全清单损坏、双坏数据、写入拒绝、丢失显示器；提交 `fix: harden shutdown and degraded startup`。
+- [x] 记录结构化事件码、版本、异常类型/HResult，不记录用户正文和含正文的异常 Message。日志以活动文件、`.1`、`.2` 实现 3×2MiB 轮换；损坏文件隔离保留，不自动清除。
+- [x] 正常退出在有界重试完成后退出；持续失败保持 dirty 并记录失败，不虚称已保存。磁盘完全不可写时无法保证落盘，恢复文件不写到运行数据根以外；该客观限制已写入实机报告。
+- [x] DispatcherUnhandledException、AppDomain 未处理异常尽力记录并在 2 秒内刷新；严重状态错误不继续运行。会话结束保存不无限阻止系统关机；窗口关闭路径释放 WinEventHook、播放器、定时器、管道和 mutex。
+- [x] 红绿后故障注入覆盖单动作坏帧、全清单损坏、当前/备份双坏数据、写入拒绝与位置 Clamp；提交 `fix: harden shutdown and degraded startup`。
+- [ ] 真实磁盘满/只读、系统注销关机、断电和显示器物理移除仍需隔离环境或对应硬件复验，验收矩阵保持“未测”。
 
 ## Task 14：自包含发布与资源替换验证
 

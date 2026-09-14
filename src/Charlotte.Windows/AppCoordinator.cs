@@ -49,13 +49,16 @@ public sealed class AppCoordinator : IDisposable
         shutdown=new(async()=>
         {
             dateTimer.Stop(); visibilityTimer.Stop();
+            ClosePanel();
             await saveQueue.FlushAsync();
         },()=>{ panel?.Close(); pet.Close(); });
         Undo=new(state,TimeProvider.System); Organizer=new(state,TimeProvider.System,()=>Undo.ReservedTaskSlots);
-        taskCompletionRouter=new(Organizer,presenter.NotifyInteraction,()=>presenter.Request(AnimationRequest.Victory()));
-        pet.Clicked+=()=>presenter.Request(AnimationRequest.Click());
-        pet.DragStarted+=()=>presenter.Request(AnimationRequest.DragStart());
-        pet.DragEnded+=()=>{ presenter.Request(AnimationRequest.DragEnd()); QueueSave(); };
+        taskCompletionRouter=new(Organizer,
+            ()=>RunIntent(presenter.NotifyInteraction),
+            ()=>RunIntent(()=>presenter.Request(AnimationRequest.Victory())));
+        pet.Clicked+=()=>RunIntent(()=>presenter.Request(AnimationRequest.Click()));
+        pet.DragStarted+=()=>RunIntent(()=>presenter.Request(AnimationRequest.DragStart()));
+        pet.DragEnded+=()=>RunIntent(()=>{ presenter.Request(AnimationRequest.DragEnd()); QueueSave(); });
         pet.SystemStateChanged+=OnSystemStateChanged;
         pet.DisplayTopologyChanged+=ClampPanelIfNeeded;
         pet.OpenManagement=TogglePanel;
@@ -68,16 +71,17 @@ public sealed class AppCoordinator : IDisposable
         ReconcileAutoStart();
     }
 
-    public void RequestAction(AnimationId id)=>presenter.Request(AnimationRequest.Panel(id));
-    public void AddTask(string title) { Organizer.AddTask(title); QueueSave(); RefreshPanel(); }
-    public void SetTask(Guid id,bool value) { Organizer.SetTaskCompleted(id,value); QueueSave(); RefreshPanel(); }
-    public void DeleteTask(Guid id) { if(Undo.DeleteTask(id)) { QueueSave(); RefreshPanel(); } }
-    public void AddSchedule(string title,DateOnly date,TimeOnly time) { Organizer.AddSchedule(title,date,time); QueueSave(); RefreshPanel(); }
-    public void SetSchedule(Guid id,bool value) { Organizer.SetScheduleCompleted(id,value); QueueSave(); RefreshPanel(); }
-    public void DeleteSchedule(Guid id) { if(Undo.DeleteSchedule(id)) { QueueSave(); RefreshPanel(); } }
-    public void UndoDelete() { if(Undo.TryUndo()) { QueueSave(); RefreshPanel(); } }
+    public void RequestAction(AnimationId id)=>RunIntent(()=>presenter.Request(AnimationRequest.Panel(id)));
+    public void AddTask(string title)=>RunIntent(()=>{ Organizer.AddTask(title); QueueSave(); RefreshPanel(); });
+    public void SetTask(Guid id,bool value)=>RunIntent(()=>{ Organizer.SetTaskCompleted(id,value); QueueSave(); RefreshPanel(); });
+    public void DeleteTask(Guid id)=>RunIntent(()=>{ if(Undo.DeleteTask(id)) { QueueSave(); RefreshPanel(); } });
+    public void AddSchedule(string title,DateOnly date,TimeOnly time)=>RunIntent(()=>{ Organizer.AddSchedule(title,date,time); QueueSave(); RefreshPanel(); });
+    public void SetSchedule(Guid id,bool value)=>RunIntent(()=>{ Organizer.SetScheduleCompleted(id,value); QueueSave(); RefreshPanel(); });
+    public void DeleteSchedule(Guid id)=>RunIntent(()=>{ if(Undo.DeleteSchedule(id)) { QueueSave(); RefreshPanel(); } });
+    public void UndoDelete()=>RunIntent(()=>{ if(Undo.TryUndo()) { QueueSave(); RefreshPanel(); } });
     public AutoStartResult SetAutoStart(bool enabled)
     {
+        if(IsExiting) return new(false,AutoStartEnabled,"shutdown-in-progress");
         var path=Environment.ProcessPath ?? throw new InvalidOperationException("无法确定程序路径。");
         var result=autoStart.SetEnabled(enabled,path);
         settings=settings with { AutoStart=result.Enabled };
@@ -87,6 +91,7 @@ public sealed class AppCoordinator : IDisposable
 
     public void OpenPanel()
     {
+        if(IsExiting) return;
         EnsurePanel();
         if(!panelController!.Open()) return;
         var scale=Math.Max(96,WindowsInterop.GetDpiForWindow(new WindowInteropHelper(pet).Handle))/96.0;
@@ -99,6 +104,7 @@ public sealed class AppCoordinator : IDisposable
 
     public void TogglePanel()
     {
+        if(IsExiting) return;
         if(panel?.IsVisible==true) ClosePanel();
         else OpenPanel();
     }
@@ -107,7 +113,11 @@ public sealed class AppCoordinator : IDisposable
 
     public SessionEndingSaveResult SaveForSessionEnding(TimeSpan timeout)
     {
-        dateTimer.Stop(); visibilityTimer.Stop();
+        if(pet.Dispatcher.CheckAccess())
+        {
+            dateTimer.Stop();
+            visibilityTimer.Stop();
+        }
         var snapshot=CreateSnapshot();
         return new SessionEndingSaver(
             token=>stateSaveGate.SaveAsync(snapshot.Data,snapshot.Settings,token),timeout).Save();
@@ -115,6 +125,7 @@ public sealed class AppCoordinator : IDisposable
 
     public void Wake()
     {
+        if(IsExiting) return;
         if(ForegroundInterop.IsFullscreenOn(pet.CurrentMonitor.Bounds,PetHandle,PanelHandle)) return;
         SetFullscreenHidden(false);
         pet.Topmost=false;
@@ -136,6 +147,7 @@ public sealed class AppCoordinator : IDisposable
         if(IsExiting) return;
         saveQueue.Request();
     }
+    private void RunIntent(Action intent)=>shutdown.TryRun(intent);
     private async Task SaveLatestAsync()
     {
         var snapshot=CreateSnapshot();

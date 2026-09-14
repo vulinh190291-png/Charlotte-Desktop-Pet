@@ -1,3 +1,4 @@
+using System.IO;
 using Charlotte.Windows.Services;
 
 namespace Charlotte.Tests;
@@ -34,5 +35,36 @@ public sealed class ShutdownSequenceTests
 
         Assert.Equal(1,flushes);
         Assert.Equal(1,finalizations);
+    }
+
+    [Fact]
+    public async Task Finalization_still_runs_when_flush_throws()
+    {
+        var failure=new IOException("write failed");
+        var finalized=false;
+        var shutdown=new ShutdownSequence(
+            ()=>Task.FromException(failure),
+            ()=>finalized=true);
+
+        var actual=await Assert.ThrowsAsync<IOException>(()=>shutdown.RequestAsync());
+
+        Assert.Same(failure,actual);
+        Assert.True(finalized);
+    }
+
+    [Fact]
+    public async Task New_intents_are_rejected_after_shutdown_begins()
+    {
+        var release=new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        var accepted=0;
+        var shutdown=new ShutdownSequence(()=>release.Task,()=>{});
+        Assert.True(shutdown.TryRun(()=>accepted++));
+
+        var exiting=shutdown.RequestAsync();
+
+        Assert.False(shutdown.TryRun(()=>accepted++));
+        Assert.Equal(1,accepted);
+        release.SetResult();
+        await exiting;
     }
 }

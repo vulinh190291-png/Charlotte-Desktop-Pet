@@ -21,6 +21,10 @@ public partial class App : Application
         var options=StartupOptions.Parse(e.Args,defaultDataRoot,StartupOptions.FindProjectRoot(AppContext.BaseDirectory));
         var dataRoot=options.DataRoot;
         log=new DiagnosticLog(dataRoot);
+        var emergencySave=new EmergencySaveHandler(
+            log,
+            timeout=>coordinator?.SaveForSessionEnding(timeout),
+            TimeSpan.FromSeconds(2));
         singleInstance=new SingleInstanceService();
         var acquired=singleInstance.TryAcquire();
         if(!acquired)
@@ -35,8 +39,8 @@ public partial class App : Application
         var assetLoad=ManifestLoader.LoadResilient(System.IO.Path.Combine(AppContext.BaseDirectory,"assets"),System.IO.Path.Combine(AppContext.BaseDirectory,"config","animations.json"));
         var assets=assetLoad.Assets;
         foreach(var issue in assetLoad.Issues) log.Write($"asset-{issue.Code}");
-        DispatcherUnhandledException+=(_,args)=>log.Write("dispatcher-unhandled",args.Exception);
-        AppDomain.CurrentDomain.UnhandledException+=(_,args)=>log.Write("domain-unhandled",args.ExceptionObject as Exception);
+        DispatcherUnhandledException+=(_,args)=>emergencySave.Handle("dispatcher-unhandled",args.Exception);
+        AppDomain.CurrentDomain.UnhandledException+=(_,args)=>emergencySave.Handle("domain-unhandled",args.ExceptionObject as Exception);
         var store=new JsonStateStore(dataRoot); var loaded=await store.LoadAsync(default);
         var window=new PetWindow(startupMonitor,options.DiagnosticShell,loaded.Settings.XRatio) { Width=assets.DisplaySizeDip.Width,Height=assets.DisplaySizeDip.Height };
         MainWindow=window;
