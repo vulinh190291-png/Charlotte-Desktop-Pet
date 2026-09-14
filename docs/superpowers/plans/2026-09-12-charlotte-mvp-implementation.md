@@ -474,12 +474,12 @@ dotnet publish src/Charlotte.Windows/Charlotte.Windows.csproj -c Release -r win-
 
 **Interfaces:** 性能脚本只读进程指标，启动测试实例使用项目内测试 profile；记录 CPU 型号、RAM、Windows build、DPI、资源阶段、提交 hash。
 
-- [ ] 测试配置支持开发参数 `--data-dir <project-artifacts-path>`，仅改变测试存储路径，发布默认仍 LocalAppData；日期注入通过测试适配器，不改用户真实系统时间。实际系统改时/休眠留作人工验收步骤。
-- [ ] 测量 5 次冷启动到首帧可见的中位数和最大值，记录缓存条件；Idle 预热 30s 后采 5min；隐藏采 1min。CPU 使用 `(ΔTotalProcessorTime / ΔwallTime / ProcessorCount) × 100`，同时记录进程 WorkingSet 与 PrivateMemory。
-- [ ] 目标：Idle 平均 CPU <2%、常规内存 <250MB、冷启动≤2s、已加载面板反馈<100ms。报告原始数据与观察范围，未达标先查缓存、无效 Tick、窗口面积和解码宽度；每次修改仅补相关测试并重新测受影响指标。
-- [ ] 实测矩阵：Win10 22H2/Win11；100/125/150/200% 及混合 DPI；主/副屏负坐标；任务栏四边/自动隐藏；跨屏拖拽、热插拔、分辨率变动；独立进程穿透；全屏进入退出；睡眠恢复、跨午夜；键盘输入、撤销边界和启动项。
-- [ ] 每格标记 Pass/Fail/未测及证据；缺机器/显示器不得填通过。软件时间注入通过不代表真实休眠/时区广播验收通过。
-- [ ] 角色资产逐动作看身体比例、身份、线条、脚锚点、连贯性、特效数量；对占位素材写明最终美术仍未交付。修复阻断运行的问题，记录非阻断限制，提交 `test: record MVP acceptance evidence`。
+- [x] 测试配置支持开发参数 `--data-dir <project-artifacts-path>`，仅改变测试存储路径，发布默认仍 LocalAppData；日期注入通过测试适配器，不改用户真实系统时间。实际系统改时/休眠留作人工验收步骤。
+- [x] 测量 5 次冷启动到首帧可见的中位数和最大值，记录缓存条件；Idle 预热 30s 后采 5min；隐藏采 1min。CPU 使用 `(ΔTotalProcessorTime / ΔwallTime / ProcessorCount) × 100`，同时记录进程 WorkingSet 与 PrivateMemory。
+- [x] 目标：Idle 平均 CPU <2%、常规内存 <250MB、冷启动≤2s、已加载面板反馈<100ms。前三项完整长测通过；面板反馈因缺少可靠跨进程计时证据保持未测，报告不以功能单测替代。
+- [x] 实测矩阵：Win10 22H2/Win11；100/125/150/200% 及混合 DPI；主/副屏负坐标；任务栏四边/自动隐藏；跨屏拖拽、热插拔、分辨率变动；独立进程穿透；全屏进入退出；睡眠恢复、跨午夜；键盘输入、撤销边界和启动项。
+- [x] 每格标记 Pass/Fail/未测及证据；缺机器/显示器不得填通过。软件时间注入通过不代表真实休眠/时区广播验收通过。
+- [x] 角色资产逐动作检查身体比例、身份、线条、脚锚点、连贯性、特效数量；工程契约与正式视觉分栏记录，当前正式美术仍未交付。阻断运行问题已修复，非阻断限制已记录；提交 `test: record MVP acceptance evidence`。
 
 ## 需求覆盖与风险处理索引
 

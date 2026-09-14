@@ -34,6 +34,14 @@ Windows 10/11 x64 桌面宠物 MVP。当前版本使用满足透明画布、帧�
 
 脚本默认进行 5 次进程冷启动、30 秒预热、5 分钟 Idle 和 1 分钟隐藏采样，结果写入 `artifacts/performance`。测试资料通过受限的 `--data-dir` 参数隔离，不污染正式用户数据。
 
+只核对 CPU、RAM、Windows build 和 DPI，不启动桌宠；DPI 优先读取鼠标所在显示器，非交互环境不可用时明确标记为系统 DPI fallback：
+
+```powershell
+.\scripts\measure-performance.ps1 -EnvironmentOnly
+```
+
+当前通过项、未测硬件和正式美术缺口分别记录在 `docs/acceptance/performance.md`、`docs/acceptance/matrix.md` 与 `docs/acceptance/known-limitations.md`。
+
 ## 操作
 
 - 左键单击角色触发点击反馈，拖动可把角色停留在任意桌面位置。
