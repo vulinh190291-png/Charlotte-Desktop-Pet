@@ -313,7 +313,7 @@ public void Battle_requires_fourteen_frames()
 
 **Interfaces:** `AnimationScheduler(AnimationCatalog catalog, BehaviorOptions options)`；`Request(AnimationRequest request, TimeSpan now)`、`Tick(TimeSpan now)`、`SetPanelOpen(bool,TimeSpan)`、`SetHidden(bool,TimeSpan)`、`NotifyInteraction(TimeSpan)`；`Current` 返回 AnimationId；`StartedAt` 返回 TimeSpan；请求类型为 DragStart、DragEnd、Victory、PanelAction(AnimationId)、Click。所有 now 同一单调时间源。
 
-- [ ] 先写优先级回归测试：
+- [x] 先写优先级回归测试：
 
 ```csharp
 [Fact]
@@ -332,11 +332,11 @@ public void Battle_coalesces_victory_and_keeps_latest_panel_action()
 }
 ```
 
-- [ ] 定义 AnimationRequest 工厂 `Panel(AnimationId)`、`Victory()`、`Click()`、`DragStart()`、`DragEnd()`，实现 SchedulerFixture.Create 使用 Task 8 完整时长；红灯。
-- [ ] 调度固定为 Drag > 当前不可中断动作 > pending Victory > 最新 panel action > Click > ambient。Drag 中保留待处理请求但不抢占 Drag；DragRelease 播完后按队列处理。一次性动作结束只选择下一动作，不高速补播错过帧。
-- [ ] 连击按最近一次有效点击计时，间隔达到 1500ms 重置；Soft→Annoyed→Warning 可升级，Warning 内额外点击忽略且不延长窗口。边界 1499/1500ms、动作自然结束后再次点击、拖拽取消点击均测试。
-- [ ] 闲置按最后有效交互计算，180s Rest、600s Sleep；面板打开抑制 Walk，保持低干扰 Idle。自动 Walk 默认每 20–40s 抽样一次、距离 24–72 DIP、速度 24 DIP/s，距离按可用边界缩短；注入随机源便于测试，不到边缘才突然反弹。Idle 按累计时长约 70% 静止/30% 微动。
-- [ ] 隐藏期间逻辑时间前进，但 pending 请求不消费为不可见演出；恢复仅排一次 Victory、最新面板动作，其余 Idle；进入隐藏清空连击。补完所有状态×请求矩阵数据测试，提交 `feat: implement deterministic animation scheduling`。
+- [x] 定义 AnimationRequest 工厂 `Panel(AnimationId)`、`Victory()`、`Click()`、`DragStart()`、`DragEnd()`，实现 SchedulerFixture.Create 使用 Task 8 完整时长；红灯。
+- [x] 调度固定为 Drag > 当前不可中断动作 > pending Victory > 最新 panel action > Click > ambient。Drag 中保留待处理请求但不抢占 Drag；DragRelease 播完后按队列处理。一次性动作结束只选择下一动作，不高速补播错过帧。
+- [x] 连击按最近一次有效点击计时，间隔达到 1500ms 重置；Soft→Annoyed→Warning 可升级，Warning 内额外点击忽略且不延长窗口。边界 1499/1500ms、动作自然结束后再次点击、拖拽取消点击均测试。
+- [x] 闲置按最后有效交互计算，180s Rest、600s Sleep；面板打开抑制 Walk，保持低干扰 Idle。自动 Walk 默认每 20–40s 抽样一次、距离 24–72 DIP、速度 24 DIP/s，距离按可用边界缩短；注入随机源便于测试，不到边缘才突然反弹。Idle 按累计时长约 70% 静止/30% 微动。
+- [x] 隐藏期间逻辑时间前进，但 pending 请求不消费为不可见演出；恢复仅排一次 Victory、最新面板动作，其余 Idle；进入隐藏清空连击。补完所有状态×请求矩阵数据测试，提交 `feat: implement deterministic animation scheduling`。
 
 ## Task 10：帧播放器、缓存与特效合成
 

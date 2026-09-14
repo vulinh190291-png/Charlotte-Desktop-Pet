@@ -16,6 +16,7 @@ public partial class ControlPanelWindow : Window
         { var button=new Button { Content=item.Item1,Margin=new(4),Padding=new(12,7,12,7) }; button.Click+=(_,_)=>app.RequestAction(item.Item2); ActionsPanel.Children.Add(button); }
         KeyDown+=(_,e)=>{ if(e.Key==Key.Escape) Hide(); };
         Deactivated+=(_,_)=>Hide();
+        IsVisibleChanged+=(_,_)=>app.OnPanelVisibilityChanged(IsVisible);
     }
 
     public void RefreshAll()

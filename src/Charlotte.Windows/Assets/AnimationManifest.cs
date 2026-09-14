@@ -5,7 +5,7 @@ using System.Text.Json;
 
 namespace Charlotte.Windows.Assets;
 
-public sealed record AnimationAssets(AnimationCatalog Catalog, PxSize LogicalCanvas, PxSize DisplaySizeDip, PxPoint FootAnchor, byte AlphaThreshold,string AssetStage);
+public sealed record AnimationAssets(AnimationCatalog Catalog,PxSize LogicalCanvas,PxSize DisplaySizeDip,PxPoint FootAnchor,byte AlphaThreshold,string AssetStage,BehaviorOptions Behavior);
 public sealed record AssetLoadResult(AnimationAssets Assets,IReadOnlyList<AssetIssue> Issues);
 
 public static class ManifestLoader
@@ -83,6 +83,8 @@ public static class ManifestLoader
             throw new InvalidDataException("人物边界必须位于逻辑画布内。");
         if(dto.AlphaThreshold==0) throw new InvalidDataException("Alpha 阈值必须为正数。");
         if(dto.Clips is null) throw new InvalidDataException("动画动作列表缺失。");
+        try { CreateBehavior(dto).Validate(); }
+        catch(ArgumentException error) { throw new InvalidDataException("自动行为参数无效。",error); }
         var effects=dto.EffectConstraints;
         if(effects?.SleepBubble is null || effects.SleepBubble.MaxSimultaneous!=1 || effects.SleepBubble.LifecycleMs!=1900
             || effects.SleepBubble.Alternates is null || !effects.SleepBubble.Alternates.SequenceEqual(["ZZZ","Z"])
@@ -115,13 +117,31 @@ public static class ManifestLoader
     }
 
     private static AnimationAssets CreateAssets(ManifestDto dto,IReadOnlyList<AnimationClip> clips)
-        => new(new(clips),new(dto.LogicalCanvas.Width,dto.LogicalCanvas.Height),new(dto.DisplaySizeDip.Width,dto.DisplaySizeDip.Height),new(dto.FootAnchor.X,dto.FootAnchor.Y),dto.AlphaThreshold,dto.AssetStage);
+        => new(new(clips),new(dto.LogicalCanvas.Width,dto.LogicalCanvas.Height),new(dto.DisplaySizeDip.Width,dto.DisplaySizeDip.Height),new(dto.FootAnchor.X,dto.FootAnchor.Y),dto.AlphaThreshold,dto.AssetStage,CreateBehavior(dto));
+
+    private static BehaviorOptions CreateBehavior(ManifestDto dto)
+    {
+        var behavior=dto.Behavior??throw new InvalidDataException("自动行为参数缺失。");
+        return new()
+        {
+            ClickWindow=TimeSpan.FromMilliseconds(behavior.ClickWindowMs),
+            RestAfter=TimeSpan.FromMilliseconds(behavior.RestAfterMs),
+            SleepAfter=TimeSpan.FromMilliseconds(behavior.SleepAfterMs),
+            AutoWalkEnabled=behavior.AutoWalkEnabled,
+            WalkDelayMinimum=TimeSpan.FromMilliseconds(behavior.WalkDelayMinimumMs),
+            WalkDelayMaximum=TimeSpan.FromMilliseconds(behavior.WalkDelayMaximumMs),
+            WalkDistanceMinimumDip=behavior.WalkDistanceMinimumDip,
+            WalkDistanceMaximumDip=behavior.WalkDistanceMaximumDip,
+            WalkSpeedDipPerSecond=behavior.WalkSpeedDipPerSecond,
+            IdleStillRatio=behavior.IdleStillRatio
+        };
+    }
 
     private static AnimationClip BuiltinIdle()
         => new(AnimationId.Idle,[new("builtin:idle",1000)],true,true,AnimationId.Idle,false);
 
     private static AnimationAssets BuiltinAssets()
-        => new(new([BuiltinIdle()]),new(480,600),new(240,300),new(240,560),16,"builtin");
+        => new(new([BuiltinIdle()]),new(480,600),new(240,300),new(240,560),16,"builtin",BehaviorOptions.Default);
 
     private sealed record SizeDto(double Width,double Height);
     private sealed record PointDto(double X,double Y);
@@ -133,5 +153,6 @@ public static class ManifestLoader
     private sealed record VictoryEffectDto(int Sparkles);
     private sealed record DragEffectDto(int BubblesPerDrag);
     private sealed record EffectConstraintsDto(SleepEffectDto SleepBubble,BattleEffectDto Battle,VictoryEffectDto Victory,DragEffectDto Drag);
-    private sealed record ManifestDto(int SchemaVersion,string AssetStage,SizeDto LogicalCanvas,SizeDto DisplaySizeDip,PointDto FootAnchor,RectDto BodyBounds,byte AlphaThreshold,List<ClipDto> Clips,EffectConstraintsDto EffectConstraints);
+    private sealed record BehaviorDto(int ClickWindowMs,int RestAfterMs,int SleepAfterMs,bool AutoWalkEnabled,int WalkDelayMinimumMs,int WalkDelayMaximumMs,double WalkDistanceMinimumDip,double WalkDistanceMaximumDip,double WalkSpeedDipPerSecond,double IdleStillRatio);
+    private sealed record ManifestDto(int SchemaVersion,string AssetStage,SizeDto LogicalCanvas,SizeDto DisplaySizeDip,PointDto FootAnchor,RectDto BodyBounds,byte AlphaThreshold,BehaviorDto Behavior,List<ClipDto> Clips,EffectConstraintsDto EffectConstraints);
 }

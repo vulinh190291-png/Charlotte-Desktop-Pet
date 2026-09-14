@@ -30,6 +30,16 @@ public partial class PetWindow : Window
     public Action? OpenManagement { get; set; }
     public PxRect PixelBounds => WindowsInterop.Bounds(hwnd);
     public MonitorSnapshot CurrentMonitor => WindowsInterop.MonitorAt(new(PixelBounds.Left+PixelBounds.Width/2,PixelBounds.Top+280*Scale));
+    public (double Left,double Right) HorizontalWalkSpaceDip
+    {
+        get
+        {
+            if(hwnd==0) return (0,0);
+            var bounds=PixelBounds;
+            var area=CurrentMonitor.WorkArea;
+            return (Math.Max(0,(bounds.Left-area.Left)/Scale),Math.Max(0,(area.Right-bounds.Right)/Scale));
+        }
+    }
     private double Scale => Math.Max(96,WindowsInterop.GetDpiForWindow(hwnd))/96.0;
     public PetWindow(MonitorSnapshot monitor, bool diagnosticShell = false, double? startupXRatio = null)
     {
@@ -60,6 +70,14 @@ public partial class PetWindow : Window
     {
         var bounds=PixelBounds; var monitor=CurrentMonitor;
         return PositionPolicy.SaveRatio(bounds.Left,monitor.WorkArea.Left,monitor.WorkArea.Width,bounds.Width);
+    }
+    public void MoveAmbientBy(double deltaDip)
+    {
+        if(hwnd==0 || !double.IsFinite(deltaDip) || Math.Abs(deltaDip)<.001) return;
+        var bounds=PixelBounds;
+        var area=CurrentMonitor.WorkArea;
+        var left=Math.Clamp(bounds.Left+deltaDip*Scale,area.Left,Math.Max(area.Left,area.Right-bounds.Width));
+        WindowsInterop.Move(hwnd,new(left,bounds.Top));
     }
     public void ClosePanel() { if(panel?.IsVisible==true) panel.Hide(); }
     public void ShowFrame(BitmapSource bitmap)

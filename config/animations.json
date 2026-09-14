@@ -20,6 +20,18 @@
     "height": 540
   },
   "alphaThreshold": 16,
+  "behavior": {
+    "clickWindowMs": 1500,
+    "restAfterMs": 180000,
+    "sleepAfterMs": 600000,
+    "autoWalkEnabled": true,
+    "walkDelayMinimumMs": 20000,
+    "walkDelayMaximumMs": 40000,
+    "walkDistanceMinimumDip": 24,
+    "walkDistanceMaximumDip": 72,
+    "walkSpeedDipPerSecond": 24,
+    "idleStillRatio": 0.7
+  },
   "clips": [
     {
       "id": "Idle",

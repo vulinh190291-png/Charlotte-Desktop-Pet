@@ -15,6 +15,10 @@ public class ManifestLoaderTests
         Assert.Equal(TimeSpan.FromMilliseconds(900),assets.Catalog.Get(AnimationId.Victory).Duration);
         Assert.Equal(560,assets.FootAnchor.Y);
         Assert.Equal("placeholder",assets.AssetStage);
+        Assert.Equal(TimeSpan.FromSeconds(20),assets.Behavior.WalkDelayMinimum);
+        Assert.Equal(TimeSpan.FromSeconds(40),assets.Behavior.WalkDelayMaximum);
+        Assert.Equal(24,assets.Behavior.WalkSpeedDipPerSecond);
+        Assert.Equal(.7,assets.Behavior.IdleStillRatio);
     }
 
     [Fact]
@@ -70,6 +74,19 @@ public class ManifestLoaderTests
         var root=FindProjectRoot();
         var source=File.ReadAllText(Path.Combine(root,"config","animations.json"));
         var manifest=WriteManifest(root,source.Replace("\"roses\": 1","\"roses\": 2"));
+        try
+        {
+            Assert.Throws<InvalidDataException>(()=>ManifestLoader.Load(Path.Combine(root,"assets"),manifest));
+        }
+        finally { Directory.Delete(Path.GetDirectoryName(manifest)!,true); }
+    }
+
+    [Fact]
+    public void Invalid_behavior_options_are_rejected()
+    {
+        var root=FindProjectRoot();
+        var source=File.ReadAllText(Path.Combine(root,"config","animations.json"));
+        var manifest=WriteManifest(root,source.Replace("\"walkSpeedDipPerSecond\": 24","\"walkSpeedDipPerSecond\": 0"));
         try
         {
             Assert.Throws<InvalidDataException>(()=>ManifestLoader.Load(Path.Combine(root,"assets"),manifest));

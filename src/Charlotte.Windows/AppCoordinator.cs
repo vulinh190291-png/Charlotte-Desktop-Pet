@@ -81,12 +81,17 @@ public sealed class AppCoordinator : IDisposable
         CheckDate();
         panel ??= new ControlPanelWindow(this) { Owner=pet,ShowInTaskbar=pet.ShowInTaskbar };
         if(panel.IsVisible) { panel.Hide(); return; }
-        presenter.NotifyInteraction();
+        presenter.SetPanelOpen(true);
         panel.RefreshAll(); panel.Show();
         var scale=Math.Max(96,WindowsInterop.GetDpiForWindow(new WindowInteropHelper(pet).Handle))/96.0;
         var position=PositionPolicy.PlacePanel(pet.PixelBounds,new(panel.Width*scale,panel.Height*scale),pet.CurrentMonitor.WorkArea,12*scale);
         WindowsInterop.Move(new WindowInteropHelper(panel).Handle,position);
         panel.Activate();
+    }
+
+    internal void OnPanelVisibilityChanged(bool visible)
+    {
+        if(!IsExiting) presenter.SetPanelOpen(visible);
     }
 
     public Task RequestExitAsync()=>shutdown.RequestAsync();
