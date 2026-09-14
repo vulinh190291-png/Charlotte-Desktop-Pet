@@ -399,7 +399,7 @@ public void Panel_reopen_keeps_session_tab()
 
 **Interfaces:** SingleInstanceService 实现 IDisposable，`TryAcquire()` 返回 bool、`NotifyExistingAsync(CancellationToken)` 返回 Task；AutoStartService `SetEnabled(bool,string exePath)` 返回操作结果；`VisibilityPolicy.Observe(bool fullscreen,TimeSpan now)` 返回稳定隐藏状态。
 
-- [ ] 写去抖和自身窗口排除测试，红灯：
+- [x] 写去抖和自身窗口排除测试，红灯：
 
 ```csharp
 [Fact]
@@ -411,11 +411,12 @@ public void A_short_fullscreen_transition_does_not_hide_pet()
 }
 ```
 
-- [ ] 用户 SID+SessionId 命名 Local mutex 和命名管道，管道 CurrentUserOnly、消息只有固定 wake 意图。主实例先监听再显示；重复启动有界重试通知，2s 后退出并记录通知失败，不创建第二只、不重定位。互斥体所有权在创建它的线程释放。
-- [ ] 自启动用 HKCU Run 的 CharlotteDesktopPet 项，路径完整加引号；注册失败读取实际注册状态后恢复 UI。移动发布目录后再次启用会更新路径；测试使用内存 `IAutoStartRegistry`，不写真实注册表。
-- [ ] 前台事件监听配合窗口边界查询，排除自己、Shell、最小化/不可见窗口；判断当前角色显示器被完整覆盖，最大化仅覆盖 WorkArea 不视作全屏。200ms 去抖；钩子失败 500ms 轮询；跨屏后重新计算。
-- [ ] 隐藏主体、特效、面板并暂停播放器；恢复原位置、面板保持关闭；系统唤醒、时间变化、每分钟和开面板前触发 DateRollover，再立即保存。后台行为不唤醒系统。
-- [ ] 绿灯并启动两个真实进程、前台全屏切换实测，提交 `feat: add desktop lifecycle integration`。检查点 B：全部 MVP 功能连通。
+- [x] 用户 SID+SessionId 命名 Local mutex 和命名管道，管道 CurrentUserOnly、消息只有固定 wake 意图。主实例先监听再显示；重复启动在 2s 内有界重试并记录最终通知失败，不创建第二只、不重定位。互斥体由获得它的线程释放；真实内核对象自动回归覆盖排他与延迟监听。
+- [x] 自启动使用 HKCU Run 的 CharlotteDesktopPet 项，路径完整加引号；注册失败读取实际注册状态后恢复 UI。移动发布目录后再次启用会更新路径；测试使用内存 `IAutoStartRegistry`，不写真实注册表。
+- [x] 前台 WinEvent 配合窗口边界查询，排除自己、Shell、最小化/不可见窗口；只在当前角色显示器被完整覆盖时判定全屏，最大化仅覆盖 WorkArea 不视作全屏。保持 200ms 去抖和 500ms 轮询兜底，跨屏后按角色当前显示器重新计算。
+- [x] 隐藏主体、特效、面板并暂停播放器；恢复原位置、面板保持关闭；系统唤醒、时间变化、每分钟和开面板前触发 DateRollover，再立即保存。后台行为不唤醒系统。
+- [x] 154 项自动测试、构建与资源检查绿灯，提交 `feat: add desktop lifecycle integration`；检查点 B 的软件功能已连通。
+- [ ] 前台全屏切换与真实登录自启动仍需在已解锁交互桌面/独立登录会话复验，保持验收矩阵“未测”。
 
 ## Task 13：异常处理、退出和故障恢复
 

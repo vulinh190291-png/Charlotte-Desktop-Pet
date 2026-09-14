@@ -19,19 +19,19 @@ public partial class App : Application
         base.OnStartup(e);
         var defaultDataRoot=System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),"CharlotteDesktopPet");
         var options=StartupOptions.Parse(e.Args,defaultDataRoot,StartupOptions.FindProjectRoot(AppContext.BaseDirectory));
+        var dataRoot=options.DataRoot;
+        log=new DiagnosticLog(dataRoot);
         singleInstance=new SingleInstanceService();
         var acquired=singleInstance.TryAcquire();
         if(!acquired)
         {
             using var timeout=new CancellationTokenSource(TimeSpan.FromSeconds(2));
-            await singleInstance.NotifyExistingAsync(timeout.Token);
+            if(!await singleInstance.NotifyExistingAsync(timeout.Token)) log.Write("single-instance-notify-failed");
             singleInstance.Dispose();
             Shutdown();
             return;
         }
         singleInstance.StartListening();
-        var dataRoot=options.DataRoot;
-        log=new DiagnosticLog(dataRoot);
         var assetLoad=ManifestLoader.LoadResilient(System.IO.Path.Combine(AppContext.BaseDirectory,"assets"),System.IO.Path.Combine(AppContext.BaseDirectory,"config","animations.json"));
         var assets=assetLoad.Assets;
         foreach(var issue in assetLoad.Issues) log.Write($"asset-{issue.Code}");

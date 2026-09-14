@@ -25,8 +25,9 @@ public sealed class AppCoordinator : IDisposable
     private readonly SaveQueue saveQueue;
     private readonly ShutdownSequence shutdown;
     private readonly TaskCompletionRouter taskCompletionRouter;
+    private readonly ForegroundEventWatcher? foregroundWatcher;
     private readonly DispatcherTimer dateTimer=new() { Interval=TimeSpan.FromMinutes(1) };
-    private readonly DispatcherTimer visibilityTimer=new() { Interval=TimeSpan.FromMilliseconds(100) };
+    private readonly DispatcherTimer visibilityTimer=new() { Interval=TimeSpan.FromMilliseconds(500) };
     private readonly VisibilityPolicy visibilityPolicy=new(TimeSpan.FromMilliseconds(200));
     private readonly long visibilityEpoch=Stopwatch.GetTimestamp();
     private ControlPanelWindow? panel;
@@ -58,6 +59,9 @@ public sealed class AppCoordinator : IDisposable
         pet.SystemStateChanged+=OnSystemStateChanged;
         pet.DisplayTopologyChanged+=ClampPanelIfNeeded;
         pet.OpenManagement=TogglePanel;
+        foregroundWatcher=ForegroundEventWatcher.TryCreate(
+            ()=>pet.Dispatcher.BeginInvoke(EvaluateVisibility));
+        if(foregroundWatcher is null) log.Write("foreground-hook-unavailable");
         dateTimer.Tick+=(_,_)=>CheckDate(); dateTimer.Start();
         visibilityTimer.Tick+=(_,_)=>EvaluateVisibility(); visibilityTimer.Start();
         CheckDate();
@@ -204,6 +208,6 @@ public sealed class AppCoordinator : IDisposable
     {
         pet.SystemStateChanged-=OnSystemStateChanged;
         pet.DisplayTopologyChanged-=ClampPanelIfNeeded;
-        dateTimer.Stop(); visibilityTimer.Stop(); taskCompletionRouter.Dispose(); presenter.Dispose();
+        dateTimer.Stop(); visibilityTimer.Stop(); foregroundWatcher?.Dispose(); taskCompletionRouter.Dispose(); presenter.Dispose();
     }
 }

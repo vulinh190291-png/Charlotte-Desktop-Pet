@@ -8,7 +8,7 @@
 
 - 项目本地 .NET SDK 10.0.401。
 - Release 构建 0 错误；离线环境无法读取 NuGet 漏洞元数据时出现 NU1900，不属于编译错误。
-- 自动测试 147 项通过。
+- 自动测试 154 项通过。
 - 资源清单 12 个动作、94 帧通过路径、帧数、时序、480×600 画布和透明/可见像素检查。
 - win-x64 自包含目录发布成功，发布目录内资源再次校验通过。
 - 发布目录复制到 `artifacts/release smoke` 后，从系统临时目录作为工作目录启动；进程持续运行且响应正常。
@@ -18,6 +18,8 @@
 - `scripts/test-effect-window.ps1` 以 Battle 诊断动作启动真实发布进程；主体保持 240×300 px，独立特效窗口为 360×420 px，扩展样式 `0x80800A8` 同时包含 `WS_EX_TRANSPARENT` 与 `WS_EX_NOACTIVATE`。
 - 性能长测已经完成，详见 `docs/acceptance/performance.md`；当前素材下冷启动、CPU 和私有内存均达到目标。
 - 管理面板的 WPF/VM 自动回归已覆盖默认 Tab、重复打开保留会话、任务完成路由、输入错误/成功路径、键盘 Esc/Enter 和持久化命令；新增探针脚本见 `scripts/test-control-panel.ps1`。
+- 单实例自动回归使用真实 Windows 命名 Mutex 与 CurrentUserOnly 命名管道，覆盖同身份排他和主监听延迟时的有界通知重试。
+- 全屏候选策略自动回归覆盖整屏、仅工作区、隐藏、最小化、Shell/自身排除；运行时已接入前台 WinEvent 与 500ms 兜底轮询。
 
 ## 尚未宣称通过
 

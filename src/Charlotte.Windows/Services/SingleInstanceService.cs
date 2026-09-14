@@ -15,11 +15,11 @@ public sealed class SingleInstanceService : IDisposable
     private Task? listener;
     public event Action? WakeRequested;
 
-    public SingleInstanceService()
+    public SingleInstanceService() : this(CreateIdentity()) { }
+
+    public SingleInstanceService(string identity)
     {
-        var sid=WindowsIdentity.GetCurrent().User?.Value ?? Environment.UserName;
-        var session=Process.GetCurrentProcess().SessionId;
-        var identity=$"CharlotteDesktopPet-{sid.Replace('\\','-')}-{session}";
+        ArgumentException.ThrowIfNullOrWhiteSpace(identity);
         mutexName=$"Local\\{identity}";
         pipeName=identity;
     }
@@ -41,17 +41,24 @@ public sealed class SingleInstanceService : IDisposable
 
     public async Task<bool> NotifyExistingAsync(CancellationToken cancellationToken)
     {
-        try
+        while(!cancellationToken.IsCancellationRequested)
         {
-            using var client=new NamedPipeClientStream(".",pipeName,PipeDirection.Out,PipeOptions.Asynchronous);
-            await client.ConnectAsync(1500,cancellationToken);
-            await client.WriteAsync(new byte[] { 1 },cancellationToken);
-            await client.FlushAsync(cancellationToken);
-            return true;
+            try
+            {
+                using var client=new NamedPipeClientStream(".",pipeName,PipeDirection.Out,PipeOptions.Asynchronous);
+                await client.ConnectAsync(250,cancellationToken);
+                await client.WriteAsync(new byte[] { 1 },cancellationToken);
+                await client.FlushAsync(cancellationToken);
+                return true;
+            }
+            catch(IOException) when(!cancellationToken.IsCancellationRequested) { }
+            catch(TimeoutException) when(!cancellationToken.IsCancellationRequested) { }
+            catch(OperationCanceledException) { return false; }
+
+            try { await Task.Delay(50,cancellationToken); }
+            catch(OperationCanceledException) { return false; }
         }
-        catch(IOException) { return false; }
-        catch(TimeoutException) { return false; }
-        catch(OperationCanceledException) { return false; }
+        return false;
     }
 
     private async Task ListenAsync(CancellationToken cancellationToken)
@@ -78,5 +85,12 @@ public sealed class SingleInstanceService : IDisposable
         if(ownsMutex) mutex?.ReleaseMutex();
         mutex?.Dispose();
         stop.Dispose();
+    }
+
+    private static string CreateIdentity()
+    {
+        var sid=WindowsIdentity.GetCurrent().User?.Value ?? Environment.UserName;
+        var session=Process.GetCurrentProcess().SessionId;
+        return $"CharlotteDesktopPet-{sid.Replace('\\','-')}-{session}";
     }
 }
