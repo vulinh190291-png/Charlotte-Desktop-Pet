@@ -72,13 +72,14 @@ public static class AssetValidator
         var exact=id switch
         {
             AnimationId.Idle or AnimationId.Walk or AnimationId.Rest or AnimationId.Sleep or AnimationId.ClickSoft => 8,
+            AnimationId.SleepEnter or AnimationId.SleepExit => 5,
             AnimationId.ClickAnnoyed or AnimationId.Victory => 10,
             AnimationId.ClickWarning => 12,
-            AnimationId.Battle => 14,
-            AnimationId.DragStart or AnimationId.DragRelease => 1,
+            AnimationId.Battle => 13,
+            AnimationId.DragStart or AnimationId.DragHold or AnimationId.DragRelease => 4,
             _ => 0
         };
-        if ((id==AnimationId.DragHold && frames.Count is <4 or >6) || (exact>0 && frames.Count!=exact))
+        if(exact>0 && frames.Count!=exact)
             issues.Add(new("frame-count",$"{id} 帧数不符合约束。"));
         foreach(var frame in frames)
         {

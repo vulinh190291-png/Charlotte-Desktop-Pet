@@ -158,7 +158,8 @@ public sealed class AnimationPresenter : IDisposable
 
     private void RenderEffects(TimeSpan now)
     {
-        var cues=EffectTimeline.Sample(scheduler.Current,now-scheduler.StartedAt);
+        var clip=catalog.Get(scheduler.Current);
+        var cues=clip.OverlayEffects?EffectTimeline.Sample(scheduler.Current,now-scheduler.StartedAt):[];
         effects.Render(cues,window.PixelBounds,window.CurrentDpi/96d);
     }
 
@@ -166,7 +167,7 @@ public sealed class AnimationPresenter : IDisposable
     {
         var id=scheduler.Current;
         var clip=catalog.Get(id);
-        var effectCount=EffectTimeline.Sample(id,now-scheduler.StartedAt).Count;
+        var effectCount=clip.OverlayEffects?EffectTimeline.Sample(id,now-scheduler.StartedAt).Count:0;
         TimeSpan delay;
         if(scheduler.ActiveWalk is not null) delay=TimeSpan.FromMilliseconds(16);
         else if(effectCount>0) delay=TimeSpan.FromMilliseconds(33);

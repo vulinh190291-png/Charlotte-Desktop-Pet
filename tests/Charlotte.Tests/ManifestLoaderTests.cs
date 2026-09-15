@@ -11,10 +11,18 @@ public class ManifestLoaderTests
     {
         var root=FindProjectRoot();
         var assets=ManifestLoader.Load(System.IO.Path.Combine(root,"assets"),System.IO.Path.Combine(root,"config","animations.json"));
-        Assert.Equal(14,assets.Catalog.Get(AnimationId.Battle).Frames.Count);
+        Assert.Equal(13,assets.Catalog.Get(AnimationId.Battle).Frames.Count);
+        Assert.Equal(5,assets.Catalog.Get(AnimationId.SleepEnter).Frames.Count);
+        Assert.Equal(8,assets.Catalog.Get(AnimationId.Sleep).Frames.Count);
+        Assert.Equal(5,assets.Catalog.Get(AnimationId.SleepExit).Frames.Count);
+        Assert.Equal(4,assets.Catalog.Get(AnimationId.DragStart).Frames.Count);
+        Assert.Equal(4,assets.Catalog.Get(AnimationId.DragHold).Frames.Count);
+        Assert.Equal(4,assets.Catalog.Get(AnimationId.DragRelease).Frames.Count);
         Assert.Equal(TimeSpan.FromMilliseconds(900),assets.Catalog.Get(AnimationId.Victory).Duration);
         Assert.Equal(560,assets.FootAnchor.Y);
-        Assert.Equal("placeholder",assets.AssetStage);
+        Assert.Equal("hybrid",assets.AssetStage);
+        Assert.False(assets.Catalog.Get(AnimationId.Battle).OverlayEffects);
+        Assert.True(assets.Catalog.Get(AnimationId.ClickSoft).OverlayEffects);
         Assert.Equal(TimeSpan.FromSeconds(20),assets.Behavior.WalkDelayMinimum);
         Assert.Equal(TimeSpan.FromSeconds(40),assets.Behavior.WalkDelayMaximum);
         Assert.Equal(24,assets.Behavior.WalkSpeedDipPerSecond);
@@ -43,7 +51,7 @@ public class ManifestLoaderTests
         var root=FindProjectRoot();
         var source=File.ReadAllText(Path.Combine(root,"config","animations.json"));
         var manifest=WriteManifest(root,source.Replace(
-            "character/generated/battle/01.png","character/generated/battle/missing.png"));
+            "character/formal-v1/battle/01.png","character/formal-v1/battle/missing.png"));
         try
         {
             var loaded=ManifestLoader.LoadResilient(Path.Combine(root,"assets"),manifest);
@@ -77,6 +85,21 @@ public class ManifestLoaderTests
         try
         {
             Assert.Throws<InvalidDataException>(()=>ManifestLoader.Load(Path.Combine(root,"assets"),manifest));
+        }
+        finally { Directory.Delete(Path.GetDirectoryName(manifest)!,true); }
+    }
+
+    [Fact]
+    public void Missing_overlay_policy_preserves_legacy_overlay_effects()
+    {
+        var root=FindProjectRoot();
+        var source=File.ReadAllText(Path.Combine(root,"config","animations.json"));
+        var manifest=WriteManifest(root,source.Replace(", \"overlayEffects\": false",string.Empty));
+        try
+        {
+            var assets=ManifestLoader.Load(Path.Combine(root,"assets"),manifest);
+
+            Assert.True(assets.Catalog.Get(AnimationId.Battle).OverlayEffects);
         }
         finally { Directory.Delete(Path.GetDirectoryName(manifest)!,true); }
     }

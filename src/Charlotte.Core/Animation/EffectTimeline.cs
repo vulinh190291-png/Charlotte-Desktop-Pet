@@ -33,7 +33,7 @@ public static class EffectTimeline
         var cycle=(long)Math.Floor(milliseconds/SleepLifecycleMs);
         var progress=milliseconds%SleepLifecycleMs/SleepLifecycleMs;
         var opacity=Math.Clamp(Math.Sin(Math.PI*progress)*1.3,0,1);
-        return [new(EffectKind.SleepBubble,cycle%2==0?"ZZZ":"Z",170,82-28*progress,opacity,.9+.12*progress)];
+        return [new(EffectKind.SleepBubble,cycle%2==0?"ZZZ":"ZZ",170,82-28*progress,opacity,.9+.12*progress)];
     }
 
     private static IReadOnlyList<EffectCue> Battle(double progress)

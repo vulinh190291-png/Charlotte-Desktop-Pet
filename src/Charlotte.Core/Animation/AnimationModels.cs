@@ -1,8 +1,8 @@
 namespace Charlotte.Core.Animation;
 
-public enum AnimationId { Idle, Walk, Rest, Sleep, ClickSoft, ClickAnnoyed, ClickWarning, DragStart, DragHold, DragRelease, Battle, Victory }
+public enum AnimationId { Idle, Walk, Rest, SleepEnter, Sleep, SleepExit, ClickSoft, ClickAnnoyed, ClickWarning, DragStart, DragHold, DragRelease, Battle, Victory }
 public sealed record FrameSpec(string Path, int DurationMs);
-public sealed record AnimationClip(AnimationId Id, IReadOnlyList<FrameSpec> Frames, bool Loop, bool Interruptible, AnimationId ReturnTo, bool AllowMirror)
+public sealed record AnimationClip(AnimationId Id, IReadOnlyList<FrameSpec> Frames, bool Loop, bool Interruptible, AnimationId ReturnTo, bool AllowMirror, bool OverlayEffects=true)
 {
     public TimeSpan Duration => TimeSpan.FromMilliseconds(Frames.Sum(x=>x.DurationMs));
 }

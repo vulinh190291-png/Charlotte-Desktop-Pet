@@ -69,7 +69,7 @@ public static class ManifestLoader
 
     private static void ValidateManifest(ManifestDto dto)
     {
-        if(dto.AssetStage is not ("placeholder" or "formal")) throw new InvalidDataException("素材阶段无效。");
+        if(dto.AssetStage is not ("placeholder" or "formal" or "hybrid")) throw new InvalidDataException("素材阶段无效。");
         if(dto.LogicalCanvas is null || dto.LogicalCanvas.Width!=480 || dto.LogicalCanvas.Height!=600)
             throw new InvalidDataException("逻辑画布必须为 480×600。");
         if(dto.DisplaySizeDip is null || dto.DisplaySizeDip.Width<=0 || dto.DisplaySizeDip.Height<=0)
@@ -87,7 +87,7 @@ public static class ManifestLoader
         catch(ArgumentException error) { throw new InvalidDataException("自动行为参数无效。",error); }
         var effects=dto.EffectConstraints;
         if(effects?.SleepBubble is null || effects.SleepBubble.MaxSimultaneous!=1 || effects.SleepBubble.LifecycleMs!=1900
-            || effects.SleepBubble.Alternates is null || !effects.SleepBubble.Alternates.SequenceEqual(["ZZZ","Z"])
+            || effects.SleepBubble.Alternates is null || !effects.SleepBubble.Alternates.SequenceEqual(["ZZZ","ZZ"])
             || effects.Battle is null || effects.Battle.Roses!=1 || effects.Battle.Petals!=3 || effects.Battle.Sparkles!=1
             || effects.Victory is null || effects.Victory.Sparkles!=1
             || effects.Drag is null || effects.Drag.BubblesPerDrag!=1)
@@ -113,7 +113,7 @@ public static class ManifestLoader
             if(frameIssues.Any(x=>x.Severity=="error")) throw new InvalidDataException(string.Join("; ",frameIssues.Select(x=>x.Message)));
             return x with { Path=path };
         }).ToArray();
-        return new(id,resolved,item.Loop,item.Interruptible,back,item.AllowMirror);
+        return new(id,resolved,item.Loop,item.Interruptible,back,item.AllowMirror,item.OverlayEffects??true);
     }
 
     private static AnimationAssets CreateAssets(ManifestDto dto,IReadOnlyList<AnimationClip> clips)
@@ -138,7 +138,7 @@ public static class ManifestLoader
     }
 
     private static AnimationClip BuiltinIdle()
-        => new(AnimationId.Idle,[new("builtin:idle",1000)],true,true,AnimationId.Idle,false);
+        => new(AnimationId.Idle,[new("builtin:idle",1000)],true,true,AnimationId.Idle,false,false);
 
     private static AnimationAssets BuiltinAssets()
         => new(new([BuiltinIdle()]),new(480,600),new(240,300),new(240,560),16,"builtin",BehaviorOptions.Default);
@@ -147,7 +147,7 @@ public static class ManifestLoader
     private sealed record PointDto(double X,double Y);
     private sealed record RectDto(double Left,double Top,double Width,double Height);
     private sealed record FrameDto(string Path,int DurationMs);
-    private sealed record ClipDto(string Id,bool Loop,bool Interruptible,string ReturnTo,bool AllowMirror,List<FrameDto> Frames);
+    private sealed record ClipDto(string Id,bool Loop,bool Interruptible,string ReturnTo,bool AllowMirror,bool? OverlayEffects,List<FrameDto> Frames);
     private sealed record SleepEffectDto(int MaxSimultaneous,int LifecycleMs,List<string> Alternates);
     private sealed record BattleEffectDto(int Roses,int Petals,int Sparkles);
     private sealed record VictoryEffectDto(int Sparkles);

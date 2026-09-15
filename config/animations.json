@@ -1,24 +1,10 @@
 {
   "schemaVersion": 1,
-  "assetStage": "placeholder",
-  "logicalCanvas": {
-    "width": 480,
-    "height": 600
-  },
-  "displaySizeDip": {
-    "width": 240,
-    "height": 300
-  },
-  "footAnchor": {
-    "x": 240,
-    "y": 560
-  },
-  "bodyBounds": {
-    "left": 16,
-    "top": 20,
-    "width": 448,
-    "height": 540
-  },
+  "assetStage": "hybrid",
+  "logicalCanvas": { "width": 480, "height": 600 },
+  "displaySizeDip": { "width": 240, "height": 300 },
+  "footAnchor": { "x": 240, "y": 560 },
+  "bodyBounds": { "left": 16, "top": 20, "width": 448, "height": 540 },
   "alphaThreshold": 16,
   "behavior": {
     "clickWindowMs": 1500,
@@ -34,509 +20,187 @@
   },
   "clips": [
     {
-      "id": "Idle",
-      "loop": true,
-      "interruptible": true,
-      "returnTo": "Idle",
-      "allowMirror": false,
+      "id": "Idle", "loop": true, "interruptible": true, "returnTo": "Idle", "allowMirror": false, "overlayEffects": false,
       "frames": [
-        {
-          "path": "character/generated/idle/01.png",
-          "durationMs": 250
-        },
-        {
-          "path": "character/generated/idle/02.png",
-          "durationMs": 250
-        },
-        {
-          "path": "character/generated/idle/03.png",
-          "durationMs": 250
-        },
-        {
-          "path": "character/generated/idle/04.png",
-          "durationMs": 250
-        },
-        {
-          "path": "character/generated/idle/05.png",
-          "durationMs": 250
-        },
-        {
-          "path": "character/generated/idle/06.png",
-          "durationMs": 250
-        },
-        {
-          "path": "character/generated/idle/07.png",
-          "durationMs": 250
-        },
-        {
-          "path": "character/generated/idle/08.png",
-          "durationMs": 250
-        }
+        { "path": "character/formal-v1/idle/01.png", "durationMs": 250 },
+        { "path": "character/formal-v1/idle/02.png", "durationMs": 250 },
+        { "path": "character/formal-v1/idle/03.png", "durationMs": 250 },
+        { "path": "character/formal-v1/idle/04.png", "durationMs": 250 },
+        { "path": "character/formal-v1/idle/05.png", "durationMs": 250 },
+        { "path": "character/formal-v1/idle/06.png", "durationMs": 250 },
+        { "path": "character/formal-v1/idle/07.png", "durationMs": 250 },
+        { "path": "character/formal-v1/idle/08.png", "durationMs": 250 }
       ]
     },
     {
-      "id": "Walk",
-      "loop": true,
-      "interruptible": true,
-      "returnTo": "Idle",
-      "allowMirror": false,
+      "id": "Walk", "loop": true, "interruptible": true, "returnTo": "Idle", "allowMirror": false, "overlayEffects": false,
       "frames": [
-        {
-          "path": "character/generated/walk/01.png",
-          "durationMs": 100
-        },
-        {
-          "path": "character/generated/walk/02.png",
-          "durationMs": 100
-        },
-        {
-          "path": "character/generated/walk/03.png",
-          "durationMs": 100
-        },
-        {
-          "path": "character/generated/walk/04.png",
-          "durationMs": 100
-        },
-        {
-          "path": "character/generated/walk/05.png",
-          "durationMs": 100
-        },
-        {
-          "path": "character/generated/walk/06.png",
-          "durationMs": 100
-        },
-        {
-          "path": "character/generated/walk/07.png",
-          "durationMs": 100
-        },
-        {
-          "path": "character/generated/walk/08.png",
-          "durationMs": 100
-        }
+        { "path": "character/formal-v1/walk/01.png", "durationMs": 100 },
+        { "path": "character/formal-v1/walk/02.png", "durationMs": 100 },
+        { "path": "character/formal-v1/walk/03.png", "durationMs": 100 },
+        { "path": "character/formal-v1/walk/04.png", "durationMs": 100 },
+        { "path": "character/formal-v1/walk/05.png", "durationMs": 100 },
+        { "path": "character/formal-v1/walk/06.png", "durationMs": 100 },
+        { "path": "character/formal-v1/walk/07.png", "durationMs": 100 },
+        { "path": "character/formal-v1/walk/08.png", "durationMs": 100 }
       ]
     },
     {
-      "id": "Rest",
-      "loop": true,
-      "interruptible": true,
-      "returnTo": "Idle",
-      "allowMirror": false,
+      "id": "Rest", "loop": true, "interruptible": true, "returnTo": "Idle", "allowMirror": false, "overlayEffects": false,
       "frames": [
-        {
-          "path": "character/generated/rest/01.png",
-          "durationMs": 250
-        },
-        {
-          "path": "character/generated/rest/02.png",
-          "durationMs": 250
-        },
-        {
-          "path": "character/generated/rest/03.png",
-          "durationMs": 250
-        },
-        {
-          "path": "character/generated/rest/04.png",
-          "durationMs": 250
-        },
-        {
-          "path": "character/generated/rest/05.png",
-          "durationMs": 250
-        },
-        {
-          "path": "character/generated/rest/06.png",
-          "durationMs": 250
-        },
-        {
-          "path": "character/generated/rest/07.png",
-          "durationMs": 250
-        },
-        {
-          "path": "character/generated/rest/08.png",
-          "durationMs": 250
-        }
+        { "path": "character/formal-v1/rest/01.png", "durationMs": 250 },
+        { "path": "character/formal-v1/rest/02.png", "durationMs": 250 },
+        { "path": "character/formal-v1/rest/03.png", "durationMs": 250 },
+        { "path": "character/formal-v1/rest/04.png", "durationMs": 250 },
+        { "path": "character/formal-v1/rest/05.png", "durationMs": 250 },
+        { "path": "character/formal-v1/rest/06.png", "durationMs": 250 },
+        { "path": "character/formal-v1/rest/07.png", "durationMs": 250 },
+        { "path": "character/formal-v1/rest/08.png", "durationMs": 250 }
       ]
     },
     {
-      "id": "Sleep",
-      "loop": true,
-      "interruptible": true,
-      "returnTo": "Idle",
-      "allowMirror": false,
+      "id": "SleepEnter", "loop": false, "interruptible": false, "returnTo": "Sleep", "allowMirror": false, "overlayEffects": false,
       "frames": [
-        {
-          "path": "character/generated/sleep/01.png",
-          "durationMs": 250
-        },
-        {
-          "path": "character/generated/sleep/02.png",
-          "durationMs": 250
-        },
-        {
-          "path": "character/generated/sleep/03.png",
-          "durationMs": 250
-        },
-        {
-          "path": "character/generated/sleep/04.png",
-          "durationMs": 250
-        },
-        {
-          "path": "character/generated/sleep/05.png",
-          "durationMs": 250
-        },
-        {
-          "path": "character/generated/sleep/06.png",
-          "durationMs": 250
-        },
-        {
-          "path": "character/generated/sleep/07.png",
-          "durationMs": 250
-        },
-        {
-          "path": "character/generated/sleep/08.png",
-          "durationMs": 250
-        }
+        { "path": "character/formal-v1/sleep-enter/01.png", "durationMs": 180 },
+        { "path": "character/formal-v1/sleep-enter/02.png", "durationMs": 180 },
+        { "path": "character/formal-v1/sleep-enter/03.png", "durationMs": 180 },
+        { "path": "character/formal-v1/sleep-enter/04.png", "durationMs": 180 },
+        { "path": "character/formal-v1/sleep-enter/05.png", "durationMs": 180 }
       ]
     },
     {
-      "id": "ClickSoft",
-      "loop": false,
-      "interruptible": true,
-      "returnTo": "Idle",
-      "allowMirror": false,
+      "id": "Sleep", "loop": true, "interruptible": true, "returnTo": "Sleep", "allowMirror": false, "overlayEffects": false,
       "frames": [
-        {
-          "path": "character/generated/click-soft/01.png",
-          "durationMs": 70
-        },
-        {
-          "path": "character/generated/click-soft/02.png",
-          "durationMs": 70
-        },
-        {
-          "path": "character/generated/click-soft/03.png",
-          "durationMs": 70
-        },
-        {
-          "path": "character/generated/click-soft/04.png",
-          "durationMs": 70
-        },
-        {
-          "path": "character/generated/click-soft/05.png",
-          "durationMs": 70
-        },
-        {
-          "path": "character/generated/click-soft/06.png",
-          "durationMs": 70
-        },
-        {
-          "path": "character/generated/click-soft/07.png",
-          "durationMs": 70
-        },
-        {
-          "path": "character/generated/click-soft/08.png",
-          "durationMs": 70
-        }
+        { "path": "character/formal-v1/sleep/01.png", "durationMs": 250 },
+        { "path": "character/formal-v1/sleep/02.png", "durationMs": 250 },
+        { "path": "character/formal-v1/sleep/03.png", "durationMs": 250 },
+        { "path": "character/formal-v1/sleep/04.png", "durationMs": 250 },
+        { "path": "character/formal-v1/sleep/05.png", "durationMs": 250 },
+        { "path": "character/formal-v1/sleep/06.png", "durationMs": 250 },
+        { "path": "character/formal-v1/sleep/07.png", "durationMs": 250 },
+        { "path": "character/formal-v1/sleep/08.png", "durationMs": 250 }
       ]
     },
     {
-      "id": "ClickAnnoyed",
-      "loop": false,
-      "interruptible": true,
-      "returnTo": "Idle",
-      "allowMirror": false,
+      "id": "SleepExit", "loop": false, "interruptible": false, "returnTo": "Idle", "allowMirror": false, "overlayEffects": false,
       "frames": [
-        {
-          "path": "character/generated/click-annoyed/01.png",
-          "durationMs": 70
-        },
-        {
-          "path": "character/generated/click-annoyed/02.png",
-          "durationMs": 70
-        },
-        {
-          "path": "character/generated/click-annoyed/03.png",
-          "durationMs": 70
-        },
-        {
-          "path": "character/generated/click-annoyed/04.png",
-          "durationMs": 70
-        },
-        {
-          "path": "character/generated/click-annoyed/05.png",
-          "durationMs": 70
-        },
-        {
-          "path": "character/generated/click-annoyed/06.png",
-          "durationMs": 70
-        },
-        {
-          "path": "character/generated/click-annoyed/07.png",
-          "durationMs": 70
-        },
-        {
-          "path": "character/generated/click-annoyed/08.png",
-          "durationMs": 70
-        },
-        {
-          "path": "character/generated/click-annoyed/09.png",
-          "durationMs": 70
-        },
-        {
-          "path": "character/generated/click-annoyed/10.png",
-          "durationMs": 70
-        }
+        { "path": "character/formal-v1/sleep-exit/01.png", "durationMs": 180 },
+        { "path": "character/formal-v1/sleep-exit/02.png", "durationMs": 180 },
+        { "path": "character/formal-v1/sleep-exit/03.png", "durationMs": 180 },
+        { "path": "character/formal-v1/sleep-exit/04.png", "durationMs": 180 },
+        { "path": "character/formal-v1/sleep-exit/05.png", "durationMs": 180 }
       ]
     },
     {
-      "id": "ClickWarning",
-      "loop": false,
-      "interruptible": true,
-      "returnTo": "Idle",
-      "allowMirror": false,
+      "id": "ClickSoft", "loop": false, "interruptible": true, "returnTo": "Idle", "allowMirror": false, "overlayEffects": true,
       "frames": [
-        {
-          "path": "character/generated/click-warning/01.png",
-          "durationMs": 70
-        },
-        {
-          "path": "character/generated/click-warning/02.png",
-          "durationMs": 70
-        },
-        {
-          "path": "character/generated/click-warning/03.png",
-          "durationMs": 70
-        },
-        {
-          "path": "character/generated/click-warning/04.png",
-          "durationMs": 70
-        },
-        {
-          "path": "character/generated/click-warning/05.png",
-          "durationMs": 70
-        },
-        {
-          "path": "character/generated/click-warning/06.png",
-          "durationMs": 70
-        },
-        {
-          "path": "character/generated/click-warning/07.png",
-          "durationMs": 70
-        },
-        {
-          "path": "character/generated/click-warning/08.png",
-          "durationMs": 70
-        },
-        {
-          "path": "character/generated/click-warning/09.png",
-          "durationMs": 70
-        },
-        {
-          "path": "character/generated/click-warning/10.png",
-          "durationMs": 70
-        },
-        {
-          "path": "character/generated/click-warning/11.png",
-          "durationMs": 70
-        },
-        {
-          "path": "character/generated/click-warning/12.png",
-          "durationMs": 70
-        }
+        { "path": "character/generated/click-soft/01.png", "durationMs": 70 },
+        { "path": "character/generated/click-soft/02.png", "durationMs": 70 },
+        { "path": "character/generated/click-soft/03.png", "durationMs": 70 },
+        { "path": "character/generated/click-soft/04.png", "durationMs": 70 },
+        { "path": "character/generated/click-soft/05.png", "durationMs": 70 },
+        { "path": "character/generated/click-soft/06.png", "durationMs": 70 },
+        { "path": "character/generated/click-soft/07.png", "durationMs": 70 },
+        { "path": "character/generated/click-soft/08.png", "durationMs": 70 }
       ]
     },
     {
-      "id": "DragStart",
-      "loop": false,
-      "interruptible": false,
-      "returnTo": "DragHold",
-      "allowMirror": false,
+      "id": "ClickAnnoyed", "loop": false, "interruptible": true, "returnTo": "Idle", "allowMirror": false, "overlayEffects": true,
       "frames": [
-        {
-          "path": "character/generated/drag-start/01.png",
-          "durationMs": 120
-        }
+        { "path": "character/generated/click-annoyed/01.png", "durationMs": 70 },
+        { "path": "character/generated/click-annoyed/02.png", "durationMs": 70 },
+        { "path": "character/generated/click-annoyed/03.png", "durationMs": 70 },
+        { "path": "character/generated/click-annoyed/04.png", "durationMs": 70 },
+        { "path": "character/generated/click-annoyed/05.png", "durationMs": 70 },
+        { "path": "character/generated/click-annoyed/06.png", "durationMs": 70 },
+        { "path": "character/generated/click-annoyed/07.png", "durationMs": 70 },
+        { "path": "character/generated/click-annoyed/08.png", "durationMs": 70 },
+        { "path": "character/generated/click-annoyed/09.png", "durationMs": 70 },
+        { "path": "character/generated/click-annoyed/10.png", "durationMs": 70 }
       ]
     },
     {
-      "id": "DragHold",
-      "loop": true,
-      "interruptible": false,
-      "returnTo": "DragHold",
-      "allowMirror": false,
+      "id": "ClickWarning", "loop": false, "interruptible": true, "returnTo": "Idle", "allowMirror": false, "overlayEffects": true,
       "frames": [
-        {
-          "path": "character/generated/drag-hold/01.png",
-          "durationMs": 100
-        },
-        {
-          "path": "character/generated/drag-hold/02.png",
-          "durationMs": 100
-        },
-        {
-          "path": "character/generated/drag-hold/03.png",
-          "durationMs": 100
-        },
-        {
-          "path": "character/generated/drag-hold/04.png",
-          "durationMs": 100
-        },
-        {
-          "path": "character/generated/drag-hold/05.png",
-          "durationMs": 100
-        },
-        {
-          "path": "character/generated/drag-hold/06.png",
-          "durationMs": 100
-        }
+        { "path": "character/generated/click-warning/01.png", "durationMs": 70 },
+        { "path": "character/generated/click-warning/02.png", "durationMs": 70 },
+        { "path": "character/generated/click-warning/03.png", "durationMs": 70 },
+        { "path": "character/generated/click-warning/04.png", "durationMs": 70 },
+        { "path": "character/generated/click-warning/05.png", "durationMs": 70 },
+        { "path": "character/generated/click-warning/06.png", "durationMs": 70 },
+        { "path": "character/generated/click-warning/07.png", "durationMs": 70 },
+        { "path": "character/generated/click-warning/08.png", "durationMs": 70 },
+        { "path": "character/generated/click-warning/09.png", "durationMs": 70 },
+        { "path": "character/generated/click-warning/10.png", "durationMs": 70 },
+        { "path": "character/generated/click-warning/11.png", "durationMs": 70 },
+        { "path": "character/generated/click-warning/12.png", "durationMs": 70 }
       ]
     },
     {
-      "id": "DragRelease",
-      "loop": false,
-      "interruptible": false,
-      "returnTo": "Idle",
-      "allowMirror": false,
+      "id": "DragStart", "loop": false, "interruptible": false, "returnTo": "DragHold", "allowMirror": false, "overlayEffects": false,
       "frames": [
-        {
-          "path": "character/generated/drag-release/01.png",
-          "durationMs": 160
-        }
+        { "path": "character/formal-v1/drag-start/01.png", "durationMs": 120 },
+        { "path": "character/formal-v1/drag-start/02.png", "durationMs": 120 },
+        { "path": "character/formal-v1/drag-start/03.png", "durationMs": 120 },
+        { "path": "character/formal-v1/drag-start/04.png", "durationMs": 120 }
       ]
     },
     {
-      "id": "Battle",
-      "loop": false,
-      "interruptible": false,
-      "returnTo": "Idle",
-      "allowMirror": false,
+      "id": "DragHold", "loop": true, "interruptible": false, "returnTo": "DragHold", "allowMirror": false, "overlayEffects": false,
       "frames": [
-        {
-          "path": "character/generated/battle/01.png",
-          "durationMs": 100
-        },
-        {
-          "path": "character/generated/battle/02.png",
-          "durationMs": 100
-        },
-        {
-          "path": "character/generated/battle/03.png",
-          "durationMs": 100
-        },
-        {
-          "path": "character/generated/battle/04.png",
-          "durationMs": 100
-        },
-        {
-          "path": "character/generated/battle/05.png",
-          "durationMs": 100
-        },
-        {
-          "path": "character/generated/battle/06.png",
-          "durationMs": 100
-        },
-        {
-          "path": "character/generated/battle/07.png",
-          "durationMs": 100
-        },
-        {
-          "path": "character/generated/battle/08.png",
-          "durationMs": 100
-        },
-        {
-          "path": "character/generated/battle/09.png",
-          "durationMs": 100
-        },
-        {
-          "path": "character/generated/battle/10.png",
-          "durationMs": 100
-        },
-        {
-          "path": "character/generated/battle/11.png",
-          "durationMs": 100
-        },
-        {
-          "path": "character/generated/battle/12.png",
-          "durationMs": 100
-        },
-        {
-          "path": "character/generated/battle/13.png",
-          "durationMs": 100
-        },
-        {
-          "path": "character/generated/battle/14.png",
-          "durationMs": 100
-        }
+        { "path": "character/formal-v1/drag-hold/01.png", "durationMs": 120 },
+        { "path": "character/formal-v1/drag-hold/02.png", "durationMs": 120 },
+        { "path": "character/formal-v1/drag-hold/03.png", "durationMs": 120 },
+        { "path": "character/formal-v1/drag-hold/04.png", "durationMs": 120 }
       ]
     },
     {
-      "id": "Victory",
-      "loop": false,
-      "interruptible": false,
-      "returnTo": "Idle",
-      "allowMirror": false,
+      "id": "DragRelease", "loop": false, "interruptible": false, "returnTo": "Idle", "allowMirror": false, "overlayEffects": false,
       "frames": [
-        {
-          "path": "character/generated/victory/01.png",
-          "durationMs": 90
-        },
-        {
-          "path": "character/generated/victory/02.png",
-          "durationMs": 90
-        },
-        {
-          "path": "character/generated/victory/03.png",
-          "durationMs": 90
-        },
-        {
-          "path": "character/generated/victory/04.png",
-          "durationMs": 90
-        },
-        {
-          "path": "character/generated/victory/05.png",
-          "durationMs": 90
-        },
-        {
-          "path": "character/generated/victory/06.png",
-          "durationMs": 90
-        },
-        {
-          "path": "character/generated/victory/07.png",
-          "durationMs": 90
-        },
-        {
-          "path": "character/generated/victory/08.png",
-          "durationMs": 90
-        },
-        {
-          "path": "character/generated/victory/09.png",
-          "durationMs": 90
-        },
-        {
-          "path": "character/generated/victory/10.png",
-          "durationMs": 90
-        }
+        { "path": "character/formal-v1/drag-release/01.png", "durationMs": 140 },
+        { "path": "character/formal-v1/drag-release/02.png", "durationMs": 140 },
+        { "path": "character/formal-v1/drag-release/03.png", "durationMs": 140 },
+        { "path": "character/formal-v1/drag-release/04.png", "durationMs": 140 }
+      ]
+    },
+    {
+      "id": "Battle", "loop": false, "interruptible": false, "returnTo": "Idle", "allowMirror": false, "overlayEffects": false,
+      "frames": [
+        { "path": "character/formal-v1/battle/01.png", "durationMs": 100 },
+        { "path": "character/formal-v1/battle/02.png", "durationMs": 100 },
+        { "path": "character/formal-v1/battle/03.png", "durationMs": 100 },
+        { "path": "character/formal-v1/battle/04.png", "durationMs": 100 },
+        { "path": "character/formal-v1/battle/05.png", "durationMs": 100 },
+        { "path": "character/formal-v1/battle/06.png", "durationMs": 100 },
+        { "path": "character/formal-v1/battle/07.png", "durationMs": 100 },
+        { "path": "character/formal-v1/battle/08.png", "durationMs": 100 },
+        { "path": "character/formal-v1/battle/09.png", "durationMs": 100 },
+        { "path": "character/formal-v1/battle/10.png", "durationMs": 100 },
+        { "path": "character/formal-v1/battle/11.png", "durationMs": 100 },
+        { "path": "character/formal-v1/battle/12.png", "durationMs": 100 },
+        { "path": "character/formal-v1/battle/13.png", "durationMs": 100 }
+      ]
+    },
+    {
+      "id": "Victory", "loop": false, "interruptible": false, "returnTo": "Idle", "allowMirror": false, "overlayEffects": false,
+      "frames": [
+        { "path": "character/formal-v1/victory/01.png", "durationMs": 90 },
+        { "path": "character/formal-v1/victory/02.png", "durationMs": 90 },
+        { "path": "character/formal-v1/victory/03.png", "durationMs": 90 },
+        { "path": "character/formal-v1/victory/04.png", "durationMs": 90 },
+        { "path": "character/formal-v1/victory/05.png", "durationMs": 90 },
+        { "path": "character/formal-v1/victory/06.png", "durationMs": 90 },
+        { "path": "character/formal-v1/victory/07.png", "durationMs": 90 },
+        { "path": "character/formal-v1/victory/08.png", "durationMs": 90 },
+        { "path": "character/formal-v1/victory/09.png", "durationMs": 90 },
+        { "path": "character/formal-v1/victory/10.png", "durationMs": 90 }
       ]
     }
   ],
   "effectConstraints": {
-    "sleepBubble": {
-      "maxSimultaneous": 1,
-      "lifecycleMs": 1900,
-      "alternates": [
-        "ZZZ",
-        "Z"
-      ]
-    },
-    "battle": {
-      "roses": 1,
-      "petals": 3,
-      "sparkles": 1
-    },
-    "victory": {
-      "sparkles": 1
-    },
-    "drag": {
-      "bubblesPerDrag": 1
-    }
+    "sleepBubble": { "maxSimultaneous": 1, "lifecycleMs": 1900, "alternates": ["ZZZ", "ZZ"] },
+    "battle": { "roses": 1, "petals": 3, "sparkles": 1 },
+    "victory": { "sparkles": 1 },
+    "drag": { "bubblesPerDrag": 1 }
   }
 }

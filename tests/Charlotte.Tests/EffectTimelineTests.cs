@@ -14,7 +14,7 @@ public class EffectTimelineTests
         Assert.Equal(EffectKind.SleepBubble,first[0].Kind);
         Assert.Equal("ZZZ",first[0].Text);
         Assert.Single(second);
-        Assert.Equal("Z",second[0].Text);
+        Assert.Equal("ZZ",second[0].Text);
     }
 
     [Fact]

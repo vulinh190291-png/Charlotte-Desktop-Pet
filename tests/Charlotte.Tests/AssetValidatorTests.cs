@@ -10,16 +10,23 @@ namespace Charlotte.Tests;
 public class AssetValidatorTests
 {
     [Theory]
-    [InlineData(AnimationId.Idle,8)]
-    [InlineData(AnimationId.Walk,8)]
-    [InlineData(AnimationId.Rest,8)]
-    [InlineData(AnimationId.ClickSoft,8)]
-    [InlineData(AnimationId.ClickAnnoyed,10)]
-    [InlineData(AnimationId.ClickWarning,12)]
-    [InlineData(AnimationId.Battle,14)]
-    [InlineData(AnimationId.Victory,10)]
-    public void Required_frame_count_is_enforced(AnimationId id,int count)
+    [InlineData("Idle",8)]
+    [InlineData("Walk",8)]
+    [InlineData("Rest",8)]
+    [InlineData("SleepEnter",5)]
+    [InlineData("Sleep",8)]
+    [InlineData("SleepExit",5)]
+    [InlineData("ClickSoft",8)]
+    [InlineData("ClickAnnoyed",10)]
+    [InlineData("ClickWarning",12)]
+    [InlineData("DragStart",4)]
+    [InlineData("DragHold",4)]
+    [InlineData("DragRelease",4)]
+    [InlineData("Battle",13)]
+    [InlineData("Victory",10)]
+    public void Required_frame_count_is_enforced(string name,int count)
     {
+        var id=Enum.Parse<AnimationId>(name);
         var valid=Enumerable.Range(1,count).Select(i=>new FrameSpec($"{id}/{i:00}.png",100)).ToArray();
         Assert.DoesNotContain(AssetValidator.CheckClip(id,valid),x=>x.Code=="frame-count");
         Assert.Contains(AssetValidator.CheckClip(id,valid[..^1]),x=>x.Code=="frame-count");
@@ -37,7 +44,7 @@ public class AssetValidatorTests
     [Fact]
     public void Battle_and_victory_duration_ranges_are_enforced()
     {
-        Assert.Contains(AssetValidator.CheckClip(AnimationId.Battle,Enumerable.Range(0,14).Select(i=>new FrameSpec($"b/{i}.png",200)).ToArray()),x=>x.Code=="total-duration");
+        Assert.Contains(AssetValidator.CheckClip(AnimationId.Battle,Enumerable.Range(0,13).Select(i=>new FrameSpec($"b/{i}.png",200)).ToArray()),x=>x.Code=="total-duration");
         Assert.Contains(AssetValidator.CheckClip(AnimationId.Victory,Enumerable.Range(0,10).Select(i=>new FrameSpec($"v/{i}.png",50)).ToArray()),x=>x.Code=="total-duration");
     }
 
