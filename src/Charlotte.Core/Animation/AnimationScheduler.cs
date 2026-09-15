@@ -80,7 +80,7 @@ public sealed class AnimationScheduler
         var idleFor=now-lastInteraction;
         if(Current is AnimationId.Idle or AnimationId.Rest or AnimationId.Walk)
         {
-            if(idleFor>=options.SleepAfter) { Start(AnimationId.Sleep,now); return; }
+            if(idleFor>=options.SleepAfter) { StartSleep(now); return; }
             if(idleFor>=options.RestAfter && Current is AnimationId.Idle or AnimationId.Walk) { Start(AnimationId.Rest,now); return; }
         }
         if(Current==AnimationId.Walk && ActiveWalk is WalkPlan walk)
@@ -138,7 +138,9 @@ public sealed class AnimationScheduler
     {
         lastInteraction=now;
         ScheduleNextWalk(now);
-        if(!hidden && Current is AnimationId.Rest or AnimationId.Sleep) Start(AnimationId.Idle,now);
+        if(hidden) return;
+        if(Current==AnimationId.Rest) Start(AnimationId.Idle,now);
+        else if(Current is AnimationId.SleepEnter or AnimationId.Sleep) WakeFromSleep(now);
     }
 
     private void RequestClick(TimeSpan now)
@@ -160,12 +162,29 @@ public sealed class AnimationScheduler
 
     private void StartRequested(AnimationId id,TimeSpan now)
     {
+        if(id==AnimationId.Sleep)
+        {
+            StartSleep(now);
+            return;
+        }
         if(id==AnimationId.Walk)
         {
             if(!TryStartWalk(now)) Start(AnimationId.Idle,now);
             return;
         }
         Start(id,now);
+    }
+
+    private void StartSleep(TimeSpan now)
+    {
+        if(catalog.Contains(AnimationId.SleepEnter)) Start(AnimationId.SleepEnter,now);
+        else if(catalog.Contains(AnimationId.Sleep)) Start(AnimationId.Sleep,now);
+        else Start(AnimationId.Idle,now);
+    }
+
+    private void WakeFromSleep(TimeSpan now)
+    {
+        Start(catalog.Contains(AnimationId.SleepExit)?AnimationId.SleepExit:AnimationId.Idle,now);
     }
 
     private bool TryStartWalk(TimeSpan now)

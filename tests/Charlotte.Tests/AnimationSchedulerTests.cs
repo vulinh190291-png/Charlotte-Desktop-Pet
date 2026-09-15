@@ -9,7 +9,8 @@ public class AnimationSchedulerTests
         AnimationClip Clip(AnimationId id,int total,bool loop=false,bool interruptible=true,AnimationId back=AnimationId.Idle)
             => new(id,[new($"{id}.png",total)],loop,interruptible,back,false);
         return new(new AnimationCatalog([
-            Clip(AnimationId.Idle,2000,true), Clip(AnimationId.Walk,800,true), Clip(AnimationId.Sleep,2000,true), Clip(AnimationId.Rest,2000,true),
+            Clip(AnimationId.Idle,2000,true), Clip(AnimationId.Walk,800,true), Clip(AnimationId.Rest,2000,true),
+            Clip(AnimationId.SleepEnter,900,false,false,AnimationId.Sleep), Clip(AnimationId.Sleep,2000,true), Clip(AnimationId.SleepExit,900,false,false),
             Clip(AnimationId.Battle,1400,false,false), Clip(AnimationId.Victory,900,false,false),
             Clip(AnimationId.ClickSoft,560), Clip(AnimationId.ClickAnnoyed,700), Clip(AnimationId.ClickWarning,840),
             Clip(AnimationId.DragStart,120,false,false,AnimationId.DragHold), Clip(AnimationId.DragHold,600,true,false), Clip(AnimationId.DragRelease,160,false,false)
@@ -26,7 +27,8 @@ public class AnimationSchedulerTests
         s.Request(AnimationRequest.Panel(AnimationId.Rest),TimeSpan.FromMilliseconds(120));
         s.Request(AnimationRequest.Panel(AnimationId.Sleep),TimeSpan.FromMilliseconds(130));
         s.Tick(TimeSpan.FromMilliseconds(1400)); Assert.Equal(AnimationId.Victory,s.Current);
-        s.Tick(TimeSpan.FromMilliseconds(2300)); Assert.Equal(AnimationId.Sleep,s.Current);
+        s.Tick(TimeSpan.FromMilliseconds(2300)); Assert.Equal(AnimationId.SleepEnter,s.Current);
+        s.Tick(TimeSpan.FromMilliseconds(3200)); Assert.Equal(AnimationId.Sleep,s.Current);
     }
 
     [Fact]
@@ -61,7 +63,8 @@ public class AnimationSchedulerTests
         s.Request(AnimationRequest.Panel(AnimationId.Rest),TimeSpan.FromMilliseconds(30));
         s.Request(AnimationRequest.Panel(AnimationId.Sleep),TimeSpan.FromMilliseconds(40));
         s.SetHidden(false,TimeSpan.FromSeconds(2)); Assert.Equal(AnimationId.Victory,s.Current);
-        s.Tick(TimeSpan.FromMilliseconds(2900)); Assert.Equal(AnimationId.Sleep,s.Current);
+        s.Tick(TimeSpan.FromMilliseconds(2900)); Assert.Equal(AnimationId.SleepEnter,s.Current);
+        s.Tick(TimeSpan.FromMilliseconds(3800)); Assert.Equal(AnimationId.Sleep,s.Current);
     }
 
     [Fact]
@@ -74,7 +77,29 @@ public class AnimationSchedulerTests
         s.Tick(TimeSpan.FromMinutes(3));
         Assert.Equal(AnimationId.Rest,s.Current);
         s.Tick(TimeSpan.FromMinutes(10));
+        Assert.Equal(AnimationId.SleepEnter,s.Current);
+        s.Tick(TimeSpan.FromMinutes(10)+TimeSpan.FromMilliseconds(899));
+        Assert.Equal(AnimationId.SleepEnter,s.Current);
+        s.Tick(TimeSpan.FromMinutes(10)+TimeSpan.FromMilliseconds(900));
         Assert.Equal(AnimationId.Sleep,s.Current);
+    }
+
+    [Theory]
+    [InlineData(600000)]
+    [InlineData(600900)]
+    public void Interaction_wakes_sleep_through_the_exit_clip(int interactionAtMilliseconds)
+    {
+        var s=Create();
+        s.Tick(TimeSpan.FromMinutes(10));
+        if(interactionAtMilliseconds>600000) s.Tick(TimeSpan.FromMilliseconds(interactionAtMilliseconds));
+
+        s.NotifyInteraction(TimeSpan.FromMilliseconds(interactionAtMilliseconds));
+
+        Assert.Equal(AnimationId.SleepExit,s.Current);
+        s.Tick(TimeSpan.FromMilliseconds(interactionAtMilliseconds+899));
+        Assert.Equal(AnimationId.SleepExit,s.Current);
+        s.Tick(TimeSpan.FromMilliseconds(interactionAtMilliseconds+900));
+        Assert.Equal(AnimationId.Idle,s.Current);
     }
 
     [Fact]
