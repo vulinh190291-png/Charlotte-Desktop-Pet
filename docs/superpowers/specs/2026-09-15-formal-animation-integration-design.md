@@ -14,7 +14,7 @@ Deploy the supplied Charlotte PNG sequences without modifying the source referen
 - Import only transparent action frames; exclude RGB overview sheets such as `Battle.png` and `Walk.png`.
 - Generate versioned runtime assets under `assets/character/formal-v1`.
 - Use a fixed transform for every frame in one motion family. Never crop individual visible bounds or resize the runtime canvas to a frame's content.
-- Render every runtime frame to 480x600 Pbgra32, horizontally centered and grounded at logical Y=560.
+- Render every runtime frame to 480x600 Pbgra32 and horizontally center it. The deployed hybrid manifest uses visible-foot anchor Y=540 so the Idle feet meet the taskbar boundary; the source-family rectangle keeps its fixed preprocessing transform.
 - Repair the exported `Sleep_Loop (7).png` canvas through the same deterministic family normalization so it cannot change the runtime canvas or display aspect ratio.
 - Record source-relative names, hashes, output names, dimensions, and transform settings in `source-map.json`.
 
@@ -40,4 +40,3 @@ Deploy the supplied Charlotte PNG sequences without modifying the source referen
 - The asset preparation command must create exactly 77 formal runtime frames plus `source-map.json`.
 - `Charlotte.AssetCheck` must pass on the complete manifest.
 - The full solution test suite and Release build must pass before completion is reported.
-

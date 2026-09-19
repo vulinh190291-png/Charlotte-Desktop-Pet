@@ -14,6 +14,7 @@ public partial class PetWindow : Window
 {
     private readonly MonitorSnapshot startupMonitor;
     private readonly double? startupXRatio;
+    private readonly double footOffsetDip;
     private nint hwnd;
     private AlphaMask? mask;
     private PxPoint? pressed;
@@ -33,7 +34,7 @@ public partial class PetWindow : Window
     public Action? OpenManagement { get; set; }
     public PxRect PixelBounds => WindowsInterop.Bounds(hwnd);
     public uint CurrentDpi=>hwnd==0?startupMonitor.Dpi:Math.Max(96,WindowsInterop.GetDpiForWindow(hwnd));
-    public MonitorSnapshot CurrentMonitor => WindowsInterop.MonitorAt(new(PixelBounds.Left+PixelBounds.Width/2,PixelBounds.Top+280*Scale));
+    public MonitorSnapshot CurrentMonitor => WindowsInterop.MonitorAt(new(PixelBounds.Left+PixelBounds.Width/2,PixelBounds.Top+footOffsetDip*Scale));
     public (double Left,double Right) HorizontalWalkSpaceDip
     {
         get
@@ -45,10 +46,11 @@ public partial class PetWindow : Window
         }
     }
     private double Scale => Math.Max(96,WindowsInterop.GetDpiForWindow(hwnd))/96.0;
-    public PetWindow(MonitorSnapshot monitor, bool diagnosticShell = false, double? startupXRatio = null)
+    public PetWindow(MonitorSnapshot monitor, double footOffsetDip, bool diagnosticShell = false, double? startupXRatio = null)
     {
         startupMonitor = monitor;
         this.startupXRatio = startupXRatio;
+        this.footOffsetDip = footOffsetDip;
         this.diagnosticShell = diagnosticShell;
         InitializeComponent();
         ShowInTaskbar = diagnosticShell;
@@ -59,7 +61,7 @@ public partial class PetWindow : Window
         };
         Loaded += (_,_) =>
         {
-            WindowsInterop.Move(hwnd,new(PositionPolicy.RestoreX(startupXRatio,monitor.WorkArea.Left,monitor.WorkArea.Width,ActualWidth*Scale),monitor.WorkArea.Bottom-280*Scale));
+            WindowsInterop.Move(hwnd,new(PositionPolicy.RestoreX(startupXRatio,monitor.WorkArea.Left,monitor.WorkArea.Width,ActualWidth*Scale),monitor.WorkArea.Bottom-footOffsetDip*Scale));
             RefreshMask(); SetClickThrough(false); hitTestTimer.Start(); UpdateClickThrough();
         };
         hitTestTimer.Tick+=(_,_)=>UpdateClickThrough();
@@ -138,8 +140,8 @@ public partial class PetWindow : Window
     private void Reflow()
     {
         var b=PixelBounds; var monitor=CurrentMonitor;
-        var next=new PetPlacement(new(b.Left,b.Top),b.Top+280*Scale,mode,monitor.Id)
-            .Reflow(monitor.WorkArea,new(b.Width,b.Height),280*Scale);
+        var next=new PetPlacement(new(b.Left,b.Top),b.Top+footOffsetDip*Scale,mode,monitor.Id)
+            .Reflow(monitor.WorkArea,new(b.Width,b.Height),footOffsetDip*Scale);
         WindowsInterop.Move(hwnd,next.Origin);
     }
     private void UpdateClickThrough()

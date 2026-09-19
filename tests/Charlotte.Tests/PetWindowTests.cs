@@ -14,7 +14,7 @@ public sealed class PetWindowTests
         StaTest.Run(() =>
         {
             var monitor=new MonitorSnapshot("test",new(0,0,1920,1080),new(0,0,1920,1040),96);
-            var window=new PetWindow(monitor);
+            var window=new PetWindow(monitor,270);
             var requests=0;
             window.OpenManagement=()=>requests++;
             try

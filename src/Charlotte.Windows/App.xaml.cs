@@ -42,7 +42,8 @@ public partial class App : Application
         DispatcherUnhandledException+=(_,args)=>emergencySave.Handle("dispatcher-unhandled",args.Exception);
         AppDomain.CurrentDomain.UnhandledException+=(_,args)=>emergencySave.Handle("domain-unhandled",args.ExceptionObject as Exception);
         var store=new JsonStateStore(dataRoot); var loaded=await store.LoadAsync(default);
-        var window=new PetWindow(startupMonitor,options.DiagnosticShell,loaded.Settings.XRatio) { Width=assets.DisplaySizeDip.Width,Height=assets.DisplaySizeDip.Height };
+        var footOffsetDip=assets.FootAnchor.Y*assets.DisplaySizeDip.Height/assets.LogicalCanvas.Height;
+        var window=new PetWindow(startupMonitor,footOffsetDip,options.DiagnosticShell,loaded.Settings.XRatio) { Width=assets.DisplaySizeDip.Width,Height=assets.DisplaySizeDip.Height };
         MainWindow=window;
         window.Show();
         presenter=new(window,assets,new FrameCache());

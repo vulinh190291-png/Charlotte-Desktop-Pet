@@ -3,7 +3,7 @@
   "assetStage": "hybrid",
   "logicalCanvas": { "width": 480, "height": 600 },
   "displaySizeDip": { "width": 240, "height": 300 },
-  "footAnchor": { "x": 240, "y": 560 },
+  "footAnchor": { "x": 240, "y": 540 },
   "bodyBounds": { "left": 16, "top": 20, "width": 448, "height": 540 },
   "alphaThreshold": 16,
   "behavior": {

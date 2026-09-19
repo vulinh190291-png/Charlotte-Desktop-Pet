@@ -19,7 +19,7 @@ public class ManifestLoaderTests
         Assert.Equal(4,assets.Catalog.Get(AnimationId.DragHold).Frames.Count);
         Assert.Equal(4,assets.Catalog.Get(AnimationId.DragRelease).Frames.Count);
         Assert.Equal(TimeSpan.FromMilliseconds(900),assets.Catalog.Get(AnimationId.Victory).Duration);
-        Assert.Equal(560,assets.FootAnchor.Y);
+        Assert.Equal(540,assets.FootAnchor.Y);
         Assert.Equal("hybrid",assets.AssetStage);
         Assert.False(assets.Catalog.Get(AnimationId.Battle).OverlayEffects);
         Assert.True(assets.Catalog.Get(AnimationId.ClickSoft).OverlayEffects);
@@ -68,7 +68,7 @@ public class ManifestLoaderTests
     {
         var root=FindProjectRoot();
         var source=File.ReadAllText(Path.Combine(root,"config","animations.json"));
-        var manifest=WriteManifest(root,source.Replace("\"y\": 560","\"y\": 601"));
+        var manifest=WriteManifest(root,source.Replace("\"y\": 540","\"y\": 601"));
         try
         {
             Assert.Throws<InvalidDataException>(()=>ManifestLoader.Load(Path.Combine(root,"assets"),manifest));
