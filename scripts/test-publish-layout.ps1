@@ -55,9 +55,9 @@ Remove-SafeArtifactDirectory $smokePrevious
 
 Remove-SafeArtifactDirectory $replacementRoot
 Copy-Item -LiteralPath $smokeRoot -Destination $replacementRoot -Recurse
-$replacementFrame = Join-Path $replacementRoot 'assets/character/generated/idle/01.png'
-$replacementSource = Join-Path $replacementRoot 'assets/character/generated/idle/02.png'
-$publishedFrame = Join-Path $publishRoot 'assets/character/generated/idle/01.png'
+$replacementFrame = Join-Path $replacementRoot 'assets/character/formal-v1/idle/01.png'
+$replacementSource = Join-Path $replacementRoot 'assets/character/formal-v1/idle/02.png'
+$publishedFrame = Join-Path $publishRoot 'assets/character/formal-v1/idle/01.png'
 $publishedHash = (Get-FileHash -LiteralPath $publishedFrame -Algorithm SHA256).Hash
 $beforeHash = (Get-FileHash -LiteralPath $replacementFrame -Algorithm SHA256).Hash
 Copy-Item -LiteralPath $replacementSource -Destination $replacementFrame -Force

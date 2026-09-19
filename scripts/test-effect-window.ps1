@@ -78,27 +78,27 @@ try {
         $mainHandle = $petProcess.MainWindowHandle
         $main = $windows | Where-Object Handle -eq $mainHandle | Select-Object -First 1
         if ($null -ne $main) {
-            $effect = $windows | Where-Object {
+            $candidateEffect = $windows | Where-Object {
                 $_.Handle -ne $mainHandle -and
                 ($_.ExtendedStyle -band $wsExTransparent) -ne 0 -and
                 ($_.ExtendedStyle -band $wsExNoActivate) -ne 0 -and
                 $_.Width -gt $main.Width -and $_.Height -gt $main.Height
             } | Select-Object -First 1
+            if ($null -ne $candidateEffect) {
+                $effect = $candidateEffect
+                break
+            }
         }
-        if ($null -ne $effect) { break }
         Start-Sleep -Milliseconds 20
     } while ([DateTime]::UtcNow -lt $deadline)
 
     foreach ($candidate in $windows) {
         Write-Host "Observed window: handle=$($candidate.Handle), size=$($candidate.Width)x$($candidate.Height), style=0x$($candidate.ExtendedStyle.ToString('X'))."
     }
-    if ($null -eq $main -or $null -eq $effect) { throw 'The Battle effect window did not reach its click-through expanded state.' }
+    if ($null -eq $main) { throw 'The Charlotte main window was not observed.' }
+    if ($null -ne $effect) { throw 'Formal Battle unexpectedly displayed a duplicate overlay effect window.' }
 
-    if (($effect.ExtendedStyle -band $wsExTransparent) -eq 0) { throw 'Effect window is not click-through.' }
-    if (($effect.ExtendedStyle -band $wsExNoActivate) -eq 0) { throw 'Effect window can activate unexpectedly.' }
-    if ($effect.Width -le $main.Width -or $effect.Height -le $main.Height) { throw 'Effect bounds did not expand independently from the pet body.' }
-
-    Write-Host "Effect window verified: pet=$($main.Width)x$($main.Height), effect=$($effect.Width)x$($effect.Height), style=0x$($effect.ExtendedStyle.ToString('X'))."
+    Write-Host "Baked Battle effects verified: pet=$($main.Width)x$($main.Height), no duplicate overlay window became visible."
 }
 finally {
     if (-not $petProcess.HasExited) {

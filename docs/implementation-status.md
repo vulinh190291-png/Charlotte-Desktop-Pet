@@ -2,6 +2,16 @@
 
 分支：feat/charlotte-mvp。所有修改留在用户指定 Charlotte 目录内。
 
+## 2026-09-19
+
+- 用户确认 `Charlotte_Animation_Implementation_Notes.docx` 覆盖旧动画冲突规则。
+- 已加入确定性 `Charlotte.AssetPrep` 工具；从只读角色参考目录映射并生成 77 张 480×600 RGBA 正式运行时帧，同时记录源文件 SHA-256 和变换信息。
+- 清单升级为 `hybrid`：Idle、Walk、Rest、Sleep 5/8/5、Drag 4/4/4、Battle 13、Victory 10 使用 formal-v1；Click 三组共 30 帧继续使用 placeholder。
+- 每个 clip 增加 `overlayEffects` 策略；正式帧关闭程序特效叠加，避免 Sleep 气泡、Battle 花瓣和 Drag 标点重复显示。
+- Sleep 保留原有对外命令并在调度器内部执行 Enter、Loop、Exit；交互唤醒通过 Exit，拖拽仍可立即抢占。
+- 原始 Sleep Loop 第 7 帧的异常横向画布与缩小构图已替换为项目内版本化透明覆盖源；source-map 可追溯其哈希，生成帧与相邻第 6/8 帧的可见边界接近。
+- 资源检查通过 14 个动作、107 帧；自动测试扩展至 171 项。连续播放的正式美术节奏、循环接缝和转换观感仍需实机验收。
+
 ## 2026-09-13
 
 - 安装源：微软 .NET 10 release-metadata；锁定 10.0.401，下载后校验 SHA512。
