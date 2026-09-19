@@ -424,16 +424,16 @@
       "Transform": "family-fixed"
     },
     {
-      "Source": "Sleep/Sleep_Loop/Sleep_Loop (7).png",
+      "Source": "project:source/formal-overrides/sleep-loop-07.png",
       "Output": "sleep/07.png",
-      "Sha256": "4ab649066633a472a97890747822d3b3f98c88bcf58b1380a1d8901e649f1276",
-      "SourceWidth": 1448,
-      "SourceHeight": 1086,
+      "Sha256": "5ff09e5daf710932ff930d5b1e924ae402635203337643451e98c46eb18675c1",
+      "SourceWidth": 1254,
+      "SourceHeight": 1254,
       "OutputWidth": 480,
       "OutputHeight": 600,
       "CenterX": 240,
       "GroundY": 560,
-      "Transform": "sleep-loop-07-transparent-margin-repair"
+      "Transform": "family-fixed"
     },
     {
       "Source": "Sleep/Sleep_Loop/Sleep_Loop (8).png",

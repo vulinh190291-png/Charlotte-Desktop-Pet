@@ -36,6 +36,7 @@ public class FormalAssetPrepTests
         Assert.DoesNotContain("Battle.png ->",output);
         Assert.DoesNotContain("Drag.png ->",output);
         Assert.DoesNotContain("Walk.png ->",output);
+        Assert.Contains("source/formal-overrides/sleep-loop-07.png => sleep/07.png",output);
     }
 
     private static string FindProjectRoot()

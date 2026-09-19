@@ -23,7 +23,10 @@ internal static class Program
     {
         if(args.Length==1 && args[0]=="--list")
         {
-            foreach(var item in Plan) Console.WriteLine($"{item.SourceRelative} -> {item.OutputRelative}");
+            foreach(var item in Plan)
+                Console.WriteLine(item.ProjectOverrideRelative is null
+                    ? $"{item.SourceRelative} -> {item.OutputRelative}"
+                    : $"{item.ProjectOverrideRelative.Replace('\\','/')} => {item.OutputRelative}");
             Console.WriteLine($"Mapped frames: {Plan.Count}");
             return Plan.Count==77?0:1;
         }
@@ -59,17 +62,20 @@ internal static class Program
             var records=new List<SourceRecord>(Plan.Count);
             foreach(var item in Plan)
             {
-                var sourcePath=Path.GetFullPath(Path.Combine(sourceRoot,item.SourceRelative));
-                if(!sourcePath.StartsWith(sourceRoot.TrimEnd(Path.DirectorySeparatorChar)+Path.DirectorySeparatorChar,StringComparison.OrdinalIgnoreCase))
-                    throw new InvalidDataException($"Mapped source escapes reference root: {item.SourceRelative}");
-                if(!File.Exists(sourcePath)) throw new FileNotFoundException($"Mapped source is missing: {item.SourceRelative}");
+                var sourcePath=item.ProjectOverrideRelative is null
+                    ? Path.GetFullPath(Path.Combine(sourceRoot,item.SourceRelative))
+                    : Path.GetFullPath(Path.Combine(parent,item.ProjectOverrideRelative));
+                var expectedRoot=item.ProjectOverrideRelative is null?sourceRoot:parent;
+                if(!sourcePath.StartsWith(expectedRoot.TrimEnd(Path.DirectorySeparatorChar)+Path.DirectorySeparatorChar,StringComparison.OrdinalIgnoreCase))
+                    throw new InvalidDataException($"Mapped source escapes its root: {item.SourceRelative}");
+                if(!File.Exists(sourcePath)) throw new FileNotFoundException($"Mapped source is missing: {item.ProjectOverrideRelative??item.SourceRelative}");
 
                 var source=LoadAlphaPng(sourcePath);
                 var outputPath=Path.Combine(staging,item.OutputRelative);
                 Directory.CreateDirectory(Path.GetDirectoryName(outputPath)!);
                 Save(Render(source,item),outputPath);
                 records.Add(new(
-                    item.SourceRelative.Replace('\\','/'),
+                    item.ProjectOverrideRelative is null?item.SourceRelative.Replace('\\','/'):$"project:{item.ProjectOverrideRelative.Replace('\\','/')}",
                     item.OutputRelative.Replace('\\','/'),
                     Convert.ToHexString(SHA256.HashData(File.ReadAllBytes(sourcePath))).ToLowerInvariant(),
                     source.PixelWidth,
@@ -78,7 +84,7 @@ internal static class Program
                     CanvasHeight,
                     CenterX,
                     GroundY,
-                    item.PreserveExportScale?"sleep-loop-07-transparent-margin-repair":"family-fixed"));
+                    "family-fixed"));
             }
 
             var map=new SourceMap(1,"formal-v1",Plan.Count,records);
@@ -132,11 +138,11 @@ internal static class Program
 
     private static RenderTargetBitmap Render(BitmapSource source,PlanEntry item)
     {
-        var correction=item.PreserveExportScale?1:Math.Min(1,Math.Min(item.CanonicalWidth/source.PixelWidth,item.CanonicalHeight/source.PixelHeight));
+        var correction=Math.Min(1,Math.Min(item.CanonicalWidth/source.PixelWidth,item.CanonicalHeight/source.PixelHeight));
         var canonicalScale=Math.Min(ContentWidth/item.CanonicalWidth,ContentHeight/item.CanonicalHeight);
         var width=source.PixelWidth*correction*canonicalScale;
         var height=source.PixelHeight*correction*canonicalScale;
-        var left=item.PreserveExportScale?0:CenterX-width/2;
+        var left=CenterX-width/2;
         var visual=new DrawingVisual();
         using(var drawing=visual.RenderOpen())
             drawing.DrawImage(source,new Rect(left,GroundY-height,width,height));
@@ -197,7 +203,8 @@ internal static class Program
                 _=>false
             };
             var file=$"{sourceGroup}{(separated?" ":string.Empty)}({index}).png";
-            items.Add(new($"Sleep/{sourceGroup}/{file}",$"{output}/{index:00}.png",1254,1254,sourceGroup=="Sleep_Loop"&&index==7));
+            var projectOverride=sourceGroup=="Sleep_Loop"&&index==7?"source/formal-overrides/sleep-loop-07.png":null;
+            items.Add(new($"Sleep/{sourceGroup}/{file}",$"{output}/{index:00}.png",1254,1254,projectOverride));
         }
     }
 
@@ -226,7 +233,7 @@ internal static class Program
         }
     }
 
-    private sealed record PlanEntry(string SourceRelative,string OutputRelative,double CanonicalWidth,double CanonicalHeight,bool PreserveExportScale=false);
+    private sealed record PlanEntry(string SourceRelative,string OutputRelative,double CanonicalWidth,double CanonicalHeight,string? ProjectOverrideRelative=null);
     private sealed record SourceRecord(string Source,string Output,string Sha256,int SourceWidth,int SourceHeight,int OutputWidth,int OutputHeight,double CenterX,double GroundY,string Transform);
     private sealed record SourceMap(int SchemaVersion,string AssetVersion,int FrameCount,IReadOnlyList<SourceRecord> Frames);
 }
