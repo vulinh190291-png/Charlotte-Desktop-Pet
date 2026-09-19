@@ -161,7 +161,7 @@ public sealed class AppCoordinator : IDisposable
     {
         if(panelController is not null) return;
         panelViewModel=new(state,Organizer,Undo,TimeProvider.System,RequestAction,QueueSave);
-        panel=new(panelViewModel,()=>AutoStartEnabled,SetAutoStart,RequestExitAsync,ClosePanel)
+        panel=new(panelViewModel,()=>AutoStartEnabled,SetAutoStart,RequestExitAsync,ClosePanel,()=>IsExiting)
         {
             Owner=pet,
             ShowInTaskbar=pet.ShowInTaskbar

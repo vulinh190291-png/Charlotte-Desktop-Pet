@@ -133,4 +133,31 @@ public sealed class ControlPanelViewModelTests
             finally { window.Close(); }
         });
     }
+
+    [Fact]
+    public void User_close_hides_the_window_so_it_can_be_opened_again()
+    {
+        using var panel=PanelFixture.Create();
+
+        StaTest.Run(() =>
+        {
+            ControlPanelWindow? window=null;
+            window=new(
+                panel.ViewModel,
+                ()=>false,
+                enabled=>new AutoStartResult(true,enabled),
+                ()=>Task.CompletedTask,
+                ()=>window!.Hide());
+            try
+            {
+                window.Show();
+                window.Close();
+
+                Assert.False(window.IsVisible);
+                window.Show();
+                Assert.True(window.IsVisible);
+            }
+            finally { window.Hide(); }
+        });
+    }
 }

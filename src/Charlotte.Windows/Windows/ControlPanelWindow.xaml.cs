@@ -16,6 +16,7 @@ public partial class ControlPanelWindow : Window,IPanelHost
     private readonly Func<bool,AutoStartResult> setAutoStart;
     private readonly Func<Task> requestExit;
     private readonly Action requestClose;
+    private readonly Func<bool> allowClose;
     private readonly DispatcherTimer refreshTimer=new() { Interval=TimeSpan.FromMilliseconds(250) };
     private bool initialized;
 
@@ -24,13 +25,15 @@ public partial class ControlPanelWindow : Window,IPanelHost
         Func<bool> readAutoStart,
         Func<bool,AutoStartResult> setAutoStart,
         Func<Task> requestExit,
-        Action requestClose)
+        Action requestClose,
+        Func<bool>? allowClose=null)
     {
         this.viewModel=viewModel;
         this.readAutoStart=readAutoStart;
         this.setAutoStart=setAutoStart;
         this.requestExit=requestExit;
         this.requestClose=requestClose;
+        this.allowClose=allowClose??(()=>false);
         InitializeComponent();
         DataContext=viewModel;
         Tabs.SelectedIndex=(int)viewModel.SelectedTab;
@@ -59,6 +62,16 @@ public partial class ControlPanelWindow : Window,IPanelHost
             viewModel.Changed-=RefreshAll;
             viewModel.PropertyChanged-=OnViewModelPropertyChanged;
         };
+    }
+
+    protected override void OnClosing(CancelEventArgs e)
+    {
+        if(!allowClose())
+        {
+            e.Cancel=true;
+            requestClose();
+        }
+        base.OnClosing(e);
     }
 
     public void RefreshAll()
