@@ -84,6 +84,23 @@ public class AnimationSchedulerTests
         Assert.Equal(AnimationId.Sleep,s.Current);
     }
 
+    [Fact]
+    public void Missing_sleep_loop_skips_enter_and_falls_back_to_idle()
+    {
+        AnimationClip Clip(AnimationId id,int total,bool loop=false,bool interruptible=true,AnimationId back=AnimationId.Idle)
+            => new(id,[new($"{id}.png",total)],loop,interruptible,back,false);
+        var scheduler=new AnimationScheduler(
+            new AnimationCatalog([
+                Clip(AnimationId.Idle,2000,true),
+                Clip(AnimationId.SleepEnter,900,false,false,AnimationId.Sleep)
+            ]),
+            BehaviorOptions.Default with { AutoWalkEnabled=false });
+
+        scheduler.Tick(TimeSpan.FromMinutes(10));
+
+        Assert.Equal(AnimationId.Idle,scheduler.Current);
+    }
+
     [Theory]
     [InlineData(600000)]
     [InlineData(600900)]

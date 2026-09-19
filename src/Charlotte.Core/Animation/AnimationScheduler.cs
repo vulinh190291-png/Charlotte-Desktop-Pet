@@ -177,9 +177,9 @@ public sealed class AnimationScheduler
 
     private void StartSleep(TimeSpan now)
     {
-        if(catalog.Contains(AnimationId.SleepEnter)) Start(AnimationId.SleepEnter,now);
-        else if(catalog.Contains(AnimationId.Sleep)) Start(AnimationId.Sleep,now);
-        else Start(AnimationId.Idle,now);
+        if(!catalog.Contains(AnimationId.Sleep)) Start(AnimationId.Idle,now);
+        else if(catalog.Contains(AnimationId.SleepEnter)) Start(AnimationId.SleepEnter,now);
+        else Start(AnimationId.Sleep,now);
     }
 
     private void WakeFromSleep(TimeSpan now)
