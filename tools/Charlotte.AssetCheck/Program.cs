@@ -14,9 +14,8 @@ try
 {
     var assets=ManifestLoader.Load(args[0],args[1]);
     var frameCount=0;
-    foreach(var id in Enum.GetValues<AnimationId>())
+    foreach(var clip in assets.Catalog.Clips)
     {
-        var clip=assets.Catalog.Get(id);
         foreach(var frame in clip.Frames)
         {
             using var stream=File.OpenRead(frame.Path);
@@ -40,7 +39,7 @@ try
             frameCount++;
         }
     }
-    Console.WriteLine($"资产校验通过：{Enum.GetValues<AnimationId>().Length} 个动作，{frameCount} 帧，阶段={assets.AssetStage}。");
+    Console.WriteLine($"资产校验通过：{assets.Catalog.Clips.Count} 个动作，{frameCount} 帧，阶段={assets.AssetStage}。");
     return 0;
 }
 catch(Exception error)

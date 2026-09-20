@@ -111,6 +111,30 @@ public sealed class ControlPanelViewModelTests
     }
 
     [Fact]
+    public void Action_panel_omits_the_retired_walk_action()
+    {
+        using var panel=PanelFixture.Create();
+
+        StaTest.Run(() =>
+        {
+            var window=new ControlPanelWindow(
+                panel.ViewModel,
+                ()=>false,
+                enabled=>new AutoStartResult(true,enabled),
+                ()=>Task.CompletedTask,
+                ()=>{ });
+            try
+            {
+                var actions=((WrapPanel)window.FindName("ActionsPanel")).Children
+                    .Cast<Button>().Select(button=>button.Content?.ToString()).ToArray();
+
+                Assert.Equal(["休息","睡觉","战斗","胜利"],actions);
+            }
+            finally { window.Close(); }
+        });
+    }
+
+    [Fact]
     public void Window_immediately_displays_expected_input_error()
     {
         using var panel=PanelFixture.Create();

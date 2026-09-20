@@ -10,6 +10,12 @@ public sealed record AssetLoadResult(AnimationAssets Assets,IReadOnlyList<AssetI
 
 public static class ManifestLoader
 {
+    private static readonly AnimationId[] RequiredAnimationIds=
+    [
+        AnimationId.Idle,AnimationId.Rest,AnimationId.SleepEnter,AnimationId.Sleep,AnimationId.SleepExit,
+        AnimationId.DragStart,AnimationId.DragHold,AnimationId.DragRelease,AnimationId.Battle,AnimationId.Victory
+    ];
+
     public static AnimationAssets Load(string assetsRoot, string manifestPath)
     {
         var root=NormalizeRoot(assetsRoot);
@@ -21,7 +27,7 @@ public static class ManifestLoader
             if(clips.Any(x=>x.Id==clip.Id)) throw new InvalidDataException("动作标识重复。");
             clips.Add(clip);
         }
-        foreach(var id in Enum.GetValues<AnimationId>()) if(clips.All(x=>x.Id!=id)) throw new InvalidDataException($"清单缺少 {id}。");
+        foreach(var id in RequiredAnimationIds) if(clips.All(x=>x.Id!=id)) throw new InvalidDataException($"清单缺少 {id}。");
         return CreateAssets(dto,clips);
     }
 

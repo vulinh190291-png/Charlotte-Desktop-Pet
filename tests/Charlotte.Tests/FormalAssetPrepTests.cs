@@ -6,7 +6,7 @@ namespace Charlotte.Tests;
 public class FormalAssetPrepTests
 {
     [Fact]
-    public void Formal_asset_plan_maps_exactly_77_frames_without_overview_sheets()
+    public void Formal_asset_plan_maps_exactly_69_frames_without_walk_or_overview_sheets()
     {
         var root=FindProjectRoot();
         var start=new ProcessStartInfo(Path.Combine(root,".tools","dotnet","dotnet.exe"))
@@ -32,7 +32,8 @@ public class FormalAssetPrepTests
         process.WaitForExit();
 
         Assert.True(process.ExitCode==0,$"Exit {process.ExitCode}: {error}");
-        Assert.Contains("Mapped frames: 77",output);
+        Assert.Contains("Mapped frames: 69",output);
+        Assert.DoesNotContain("-> walk/",output);
         Assert.DoesNotContain("Battle.png ->",output);
         Assert.DoesNotContain("Drag.png ->",output);
         Assert.DoesNotContain("Walk.png ->",output);

@@ -28,7 +28,7 @@ internal static class Program
                     ? $"{item.SourceRelative} -> {item.OutputRelative}"
                     : $"{item.ProjectOverrideRelative.Replace('\\','/')} => {item.OutputRelative}");
             Console.WriteLine($"Mapped frames: {Plan.Count}");
-            return Plan.Count==77?0:1;
+            return Plan.Count==69?0:1;
         }
         if(args.Length!=2)
         {
@@ -164,7 +164,6 @@ internal static class Program
     {
         var items=new List<PlanEntry>();
         Add(items,"Idle/Idle/idle_{0:00}.png","idle",1,8);
-        AddWalk(items);
         Add(items,"Rest/Rest/rest_{0:00}.png","rest",1,8);
         AddSleep(items,"Sleep_Enter","sleep-enter",5);
         AddSleep(items,"Sleep_Loop","sleep",8);
@@ -180,15 +179,6 @@ internal static class Program
     private static void Add(List<PlanEntry> items,string sourcePattern,string output,int first,int last,double canonicalWidth=1254,double canonicalHeight=1254)
     {
         for(var index=first;index<=last;index++) items.Add(new(string.Format(sourcePattern,index),$"{output}/{index-first+1:00}.png",canonicalWidth,canonicalHeight));
-    }
-
-    private static void AddWalk(List<PlanEntry> items)
-    {
-        for(var index=1;index<=8;index++)
-        {
-            var source=index<=2?$"Walk/Walk({index}).png":$"Walk/Walk ({index}).png";
-            items.Add(new(source,$"walk/{index:00}.png",1254,1254));
-        }
     }
 
     private static void AddSleep(List<PlanEntry> items,string sourceGroup,string output,int count)

@@ -20,12 +20,13 @@ public class ManifestLoaderTests
         Assert.Equal(4,assets.Catalog.Get(AnimationId.DragRelease).Frames.Count);
         Assert.Equal(TimeSpan.FromMilliseconds(1400),assets.Catalog.Get(AnimationId.Victory).Duration);
         Assert.Equal(540,assets.FootAnchor.Y);
-        Assert.Equal("hybrid",assets.AssetStage);
+        Assert.Equal("formal",assets.AssetStage);
         Assert.False(assets.Catalog.Get(AnimationId.Battle).OverlayEffects);
-        Assert.True(assets.Catalog.Get(AnimationId.ClickSoft).OverlayEffects);
-        Assert.Equal(TimeSpan.FromSeconds(20),assets.Behavior.WalkDelayMinimum);
-        Assert.Equal(TimeSpan.FromSeconds(40),assets.Behavior.WalkDelayMaximum);
-        Assert.Equal(20,assets.Behavior.WalkSpeedDipPerSecond);
+        Assert.False(assets.Catalog.Contains(AnimationId.Walk));
+        Assert.False(assets.Catalog.Contains(AnimationId.ClickSoft));
+        Assert.False(assets.Catalog.Contains(AnimationId.ClickAnnoyed));
+        Assert.False(assets.Catalog.Contains(AnimationId.ClickWarning));
+        Assert.False(assets.Behavior.AutoWalkEnabled);
         Assert.Equal(.7,assets.Behavior.IdleStillRatio);
     }
 
@@ -39,15 +40,12 @@ public class ManifestLoaderTests
             assets.Catalog.Get(AnimationId.Idle).Frames.Select(x=>x.DurationMs));
         Assert.All(assets.Catalog.Get(AnimationId.Rest).Frames,x=>Assert.InRange(x.DurationMs,300,350));
         Assert.All(assets.Catalog.Get(AnimationId.Sleep).Frames,x=>Assert.InRange(x.DurationMs,300,350));
-        Assert.All(assets.Catalog.Get(AnimationId.Walk).Frames,x=>Assert.InRange(x.DurationMs,125,150));
-        Assert.All(assets.Catalog.Get(AnimationId.ClickSoft).Frames,x=>Assert.InRange(x.DurationMs,100,111));
-        Assert.All(assets.Catalog.Get(AnimationId.ClickAnnoyed).Frames,x=>Assert.InRange(x.DurationMs,100,111));
-        Assert.All(assets.Catalog.Get(AnimationId.ClickWarning).Frames,x=>Assert.InRange(x.DurationMs,100,111));
         Assert.All(assets.Catalog.Get(AnimationId.Battle).Frames,x=>Assert.InRange(x.DurationMs,125,143));
         Assert.All(assets.Catalog.Get(AnimationId.Victory).Frames,x=>Assert.InRange(x.DurationMs,140,150));
         Assert.All(assets.Catalog.Get(AnimationId.SleepEnter).Frames,x=>Assert.InRange(x.DurationMs,200,225));
         Assert.All(assets.Catalog.Get(AnimationId.SleepExit).Frames,x=>Assert.InRange(x.DurationMs,200,225));
-        Assert.Equal(20,assets.Behavior.WalkSpeedDipPerSecond);
+        Assert.False(Directory.Exists(Path.Combine(root,"assets","character","generated")));
+        Assert.False(Directory.Exists(Path.Combine(root,"assets","character","formal-v1","walk")));
     }
 
     [Fact]

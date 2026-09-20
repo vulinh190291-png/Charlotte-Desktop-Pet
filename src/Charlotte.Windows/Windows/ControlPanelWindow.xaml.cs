@@ -38,7 +38,7 @@ public partial class ControlPanelWindow : Window,IPanelHost
         DataContext=viewModel;
         Tabs.SelectedIndex=(int)viewModel.SelectedTab;
         initialized=true;
-        foreach(var item in new[] { ("散步",AnimationId.Walk),("休息",AnimationId.Rest),("睡觉",AnimationId.Sleep),("战斗",AnimationId.Battle),("胜利",AnimationId.Victory) })
+        foreach(var item in new[] { ("休息",AnimationId.Rest),("睡觉",AnimationId.Sleep),("战斗",AnimationId.Battle),("胜利",AnimationId.Victory) })
         {
             var button=new Button { Content=item.Item1,Margin=new(4),Padding=new(12,7,12,7),Command=viewModel.RequestActionCommand,CommandParameter=item.Item2 };
             ActionsPanel.Children.Add(button);

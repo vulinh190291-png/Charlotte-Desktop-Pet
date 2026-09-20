@@ -4,8 +4,9 @@
 
 ## 2026-09-20
 
-- 动画播放采用用户确认的“沉稳优雅”节奏：Idle 由固定 250ms 改为带 280–480ms 关键帧停顿的 2.88 秒循环；Rest/Sleep 约 3 FPS；Walk/Battle/Victory 约 7–8 FPS；Click 为 10 FPS；Sleep 进出为约 4.5 FPS；拖拽保持原速以保证跟手。
-- 自动 Walk 位移速度由 24 降为 20 DIP/s，并同步更新 Battle/Victory 的合法总时长区间与兼容特效时间轴；新增真实项目清单和特效边界测试，防止后续发布意外恢复为过快节奏或提前结束特效。
+- 动画播放采用用户确认的“沉稳优雅”节奏：Idle 使用 280–480ms 关键帧停顿的 2.88 秒循环；Rest/Sleep 约 3 FPS；Battle/Victory 约 7–8 FPS；Sleep 进出约 4.5 FPS；拖拽保持原速以保证跟手。
+- Battle/Victory 的合法总时长区间与兼容特效时间轴已同步，新测试防止后续发布意外恢复为过快节奏或提前结束特效。
+- 按用户后续确认，当前版本退出 Walk 与 ClickSoft/ClickAnnoyed/ClickWarning：清单改为 10 个正式动作、69 帧，自动散步和面板“散步”入口关闭，`generated/` 与 formal-v1 Walk 帧全部删除。左键仍负责唤醒和重置闲置计时；旧动作标识仅保留为兼容能力。
 
 ## 2026-09-19
 

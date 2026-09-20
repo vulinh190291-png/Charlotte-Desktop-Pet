@@ -197,10 +197,34 @@ public class AnimationSchedulerTests
             new SequenceRandomSource(0,1,1));
         scheduler.SetWalkSpace(100,100);
 
+        Assert.False(scheduler.NeedsWalkSpace(TimeSpan.FromSeconds(20)));
         scheduler.Tick(TimeSpan.FromSeconds(20));
 
         Assert.Equal(AnimationId.Idle,scheduler.Current);
         Assert.Null(scheduler.ActiveWalk);
+    }
+
+    [Fact]
+    public void Click_without_click_clips_only_wakes_and_restarts_the_idle_clock()
+    {
+        AnimationClip Clip(AnimationId id,int duration,bool loop=true,AnimationId back=AnimationId.Idle)
+            => new(id,[new($"{id}.png",duration)],loop,true,back,false);
+        var scheduler=new AnimationScheduler(
+            new AnimationCatalog([
+                Clip(AnimationId.Idle,2000),
+                Clip(AnimationId.Rest,2000),
+                Clip(AnimationId.Sleep,2000)
+            ]),
+            BehaviorOptions.Default with { AutoWalkEnabled=false });
+        scheduler.Tick(TimeSpan.FromMinutes(3));
+
+        scheduler.Request(AnimationRequest.Click(),TimeSpan.FromMinutes(4));
+
+        Assert.Equal(AnimationId.Idle,scheduler.Current);
+        scheduler.Tick(TimeSpan.FromMinutes(7)-TimeSpan.FromMilliseconds(1));
+        Assert.Equal(AnimationId.Idle,scheduler.Current);
+        scheduler.Tick(TimeSpan.FromMinutes(7));
+        Assert.Equal(AnimationId.Rest,scheduler.Current);
     }
 
     [Fact]

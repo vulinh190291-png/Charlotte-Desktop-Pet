@@ -6,9 +6,11 @@ The user confirmed on 2026-09-15 that `Charlotte_Animation_Implementation_Notes.
 
 The user confirmed on 2026-09-20 that runtime playback should use the calmer timing profile below. This timing decision supersedes the early placeholder defaults but does not change frame counts, clip priority, or interruptibility.
 
+The user subsequently confirmed on 2026-09-20 that Walk and all three Click animations must be retired, together with the legacy `generated/` directory. Click input remains an interaction signal, while automatic walking and the panel Walk command are disabled.
+
 ## Goal
 
-Deploy the supplied Charlotte PNG sequences without modifying the source reference folder, while preserving the existing 480x600 logical canvas, 240x300 DIP window, scheduler priority rules, and placeholder Click animations.
+Deploy the retained Charlotte PNG sequences without modifying the source reference folder, while preserving the existing 480x600 logical canvas, 240x300 DIP window, scheduler priority rules, and non-animation click behavior.
 
 ## Asset pipeline
 
@@ -16,7 +18,7 @@ Deploy the supplied Charlotte PNG sequences without modifying the source referen
 - Import only transparent action frames; exclude RGB overview sheets such as `Battle.png` and `Walk.png`.
 - Generate versioned runtime assets under `assets/character/formal-v1`.
 - Use a fixed transform for every frame in one motion family. Never crop individual visible bounds or resize the runtime canvas to a frame's content.
-- Render every runtime frame to 480x600 Pbgra32 and horizontally center it. The deployed hybrid manifest uses visible-foot anchor Y=540 so the Idle feet meet the taskbar boundary; the source-family rectangle keeps its fixed preprocessing transform.
+- Render every runtime frame to 480x600 Pbgra32 and horizontally center it. The deployed formal manifest uses visible-foot anchor Y=540 so the Idle feet meet the taskbar boundary; the source-family rectangle keeps its fixed preprocessing transform.
 - Repair the exported `Sleep_Loop (7).png` canvas through the same deterministic family normalization so it cannot change the runtime canvas or display aspect ratio.
 - Record source-relative names, hashes, output names, dimensions, and transform settings in `source-map.json`.
 
@@ -27,11 +29,11 @@ Deploy the supplied Charlotte PNG sequences without modifying the source referen
 - Automatic or panel-requested sleep starts at `SleepEnter`, continues to `Sleep`, and wakes through `SleepExit` before Idle.
 - Drag remains higher priority than other actions. DragStart, DragHold, and DragRelease each contain four frames; DragRelease remains uninterruptible and completes before pending work.
 - Battle contains 13 frames, remains uninterruptible, and returns to Idle.
-- Each clip declares whether programmatic overlay effects are enabled. Formal Sleep, Drag, Battle, and Victory frames use baked effects and therefore disable overlays. Placeholder Click clips remain available.
-- The manifest reports a `hybrid` asset stage because formal actions and placeholder Click actions coexist.
+- Each clip declares whether programmatic overlay effects are enabled. Formal Sleep, Drag, Battle, and Victory frames use baked effects and therefore disable overlays.
+- The manifest reports a `formal` asset stage and contains no Walk or Click clips.
 - Idle uses per-frame holds of 280/320/360/480/360/320/280/480 ms so the pose has deliberate pauses instead of mechanical constant-rate playback.
-- Walk uses 140 ms per frame and 20 DIP/s movement; Rest uses 320 ms per frame; Sleep uses 340 ms per frame; SleepEnter and SleepExit use 220 ms per frame.
-- Click clips use 100 ms per frame, Battle uses 130 ms per frame, and Victory uses 140 ms per frame. Drag timing remains unchanged to preserve direct manipulation feedback.
+- Rest uses 320 ms per frame; Sleep uses 340 ms per frame; SleepEnter and SleepExit use 220 ms per frame.
+- Battle uses 130 ms per frame and Victory uses 140 ms per frame. Drag timing remains unchanged to preserve direct manipulation feedback.
 - Validation accepts Battle totals from 1500–1900 ms and Victory totals from 1200–1600 ms, retaining protection against clearly mistimed assets while allowing this profile.
 
 ## Failure behavior
@@ -42,7 +44,7 @@ Deploy the supplied Charlotte PNG sequences without modifying the source referen
 
 ## Verification
 
-- Unit tests cover 5/8/5 sleep transitions, wake behavior, 4/4/4 drag counts, 13-frame Battle, hybrid manifests, and baked-effect suppression.
-- The asset preparation command must create exactly 77 formal runtime frames plus `source-map.json`.
+- Unit tests cover 5/8/5 sleep transitions, wake behavior, 4/4/4 drag counts, 13-frame Battle, the formal manifest, retired Walk/Click behavior, and baked-effect suppression.
+- The asset preparation command must create exactly 69 formal runtime frames plus `source-map.json` and must not emit Walk.
 - `Charlotte.AssetCheck` must pass on the complete manifest.
 - The full solution test suite and Release build must pass before completion is reported.

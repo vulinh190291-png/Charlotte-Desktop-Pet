@@ -9,7 +9,8 @@ public sealed record AnimationClip(AnimationId Id, IReadOnlyList<FrameSpec> Fram
 
 public sealed class AnimationCatalog(IEnumerable<AnimationClip> clips)
 {
-    private readonly IReadOnlyDictionary<AnimationId,AnimationClip> items = clips.ToDictionary(x=>x.Id);
+    private readonly Dictionary<AnimationId,AnimationClip> items = clips.ToDictionary(x=>x.Id);
+    public IReadOnlyCollection<AnimationClip> Clips=>items.Values;
     public bool Contains(AnimationId id)=>items.ContainsKey(id);
     public AnimationClip Get(AnimationId id) => items.TryGetValue(id,out var clip) ? clip : items[AnimationId.Idle];
 }

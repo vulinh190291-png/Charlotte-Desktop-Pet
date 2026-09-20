@@ -42,7 +42,7 @@ public sealed class AnimationScheduler
         => ActiveWalk?.OffsetAt(now-StartedAt)??0;
 
     public bool NeedsWalkSpace(TimeSpan now)
-        => !hidden && Current==AnimationId.Idle && !panelOpen && options.AutoWalkEnabled
+        => !hidden && Current==AnimationId.Idle && !panelOpen && options.AutoWalkEnabled && catalog.Contains(AnimationId.Walk)
             && nextWalkAt is TimeSpan due && now>=due;
 
     public void Request(AnimationRequest request,TimeSpan now)
@@ -150,7 +150,8 @@ public sealed class AnimationScheduler
         if(inside && clickLevel>=3) return;
         clickLevel++;
         lastClick=now;
-        Start(clickLevel switch { 1=>AnimationId.ClickSoft,2=>AnimationId.ClickAnnoyed,_=>AnimationId.ClickWarning },now);
+        var animation=clickLevel switch { 1=>AnimationId.ClickSoft,2=>AnimationId.ClickAnnoyed,_=>AnimationId.ClickWarning };
+        if(catalog.Contains(animation)) Start(animation,now);
     }
 
     private void StartNext(TimeSpan now)

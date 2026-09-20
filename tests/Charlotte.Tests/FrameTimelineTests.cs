@@ -5,6 +5,16 @@ namespace Charlotte.Tests;
 public class FrameTimelineTests
 {
     [Fact]
+    public void Catalog_enumerates_only_registered_clips()
+    {
+        var idle=new AnimationClip(AnimationId.Idle,[new("idle.png",100)],true,true,AnimationId.Idle,false);
+        var rest=new AnimationClip(AnimationId.Rest,[new("rest.png",100)],true,true,AnimationId.Idle,false);
+        var catalog=new AnimationCatalog([idle,rest]);
+
+        Assert.Equal([AnimationId.Idle,AnimationId.Rest],catalog.Clips.Select(clip=>clip.Id));
+    }
+
+    [Fact]
     public void Loop_samples_elapsed_time_without_replaying_frames()
     {
         var clip=new AnimationClip(AnimationId.Walk,Enumerable.Range(0,8).Select(i=>new FrameSpec($"{i}.png",100)).ToArray(),true,true,AnimationId.Idle,false);
