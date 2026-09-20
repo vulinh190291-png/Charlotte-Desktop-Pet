@@ -44,6 +44,8 @@ public class AssetValidatorTests
     [Fact]
     public void Battle_and_victory_duration_ranges_are_enforced()
     {
+        Assert.DoesNotContain(AssetValidator.CheckClip(AnimationId.Battle,Enumerable.Range(0,13).Select(i=>new FrameSpec($"b/{i}.png",130)).ToArray()),x=>x.Code=="total-duration");
+        Assert.DoesNotContain(AssetValidator.CheckClip(AnimationId.Victory,Enumerable.Range(0,10).Select(i=>new FrameSpec($"v/{i}.png",140)).ToArray()),x=>x.Code=="total-duration");
         Assert.Contains(AssetValidator.CheckClip(AnimationId.Battle,Enumerable.Range(0,13).Select(i=>new FrameSpec($"b/{i}.png",200)).ToArray()),x=>x.Code=="total-duration");
         Assert.Contains(AssetValidator.CheckClip(AnimationId.Victory,Enumerable.Range(0,10).Select(i=>new FrameSpec($"v/{i}.png",50)).ToArray()),x=>x.Code=="total-duration");
     }

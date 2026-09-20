@@ -4,6 +4,8 @@
 
 The user confirmed on 2026-09-15 that `Charlotte_Animation_Implementation_Notes.docx` supersedes earlier animation rules wherever they conflict. In particular, Battle is 13 frames, Drag is 4/4/4, and Sleep is 5/8/5 with explicit enter and exit transitions.
 
+The user confirmed on 2026-09-20 that runtime playback should use the calmer timing profile below. This timing decision supersedes the early placeholder defaults but does not change frame counts, clip priority, or interruptibility.
+
 ## Goal
 
 Deploy the supplied Charlotte PNG sequences without modifying the source reference folder, while preserving the existing 480x600 logical canvas, 240x300 DIP window, scheduler priority rules, and placeholder Click animations.
@@ -27,6 +29,10 @@ Deploy the supplied Charlotte PNG sequences without modifying the source referen
 - Battle contains 13 frames, remains uninterruptible, and returns to Idle.
 - Each clip declares whether programmatic overlay effects are enabled. Formal Sleep, Drag, Battle, and Victory frames use baked effects and therefore disable overlays. Placeholder Click clips remain available.
 - The manifest reports a `hybrid` asset stage because formal actions and placeholder Click actions coexist.
+- Idle uses per-frame holds of 280/320/360/480/360/320/280/480 ms so the pose has deliberate pauses instead of mechanical constant-rate playback.
+- Walk uses 140 ms per frame and 20 DIP/s movement; Rest uses 320 ms per frame; Sleep uses 340 ms per frame; SleepEnter and SleepExit use 220 ms per frame.
+- Click clips use 100 ms per frame, Battle uses 130 ms per frame, and Victory uses 140 ms per frame. Drag timing remains unchanged to preserve direct manipulation feedback.
+- Validation accepts Battle totals from 1500–1900 ms and Victory totals from 1200–1600 ms, retaining protection against clearly mistimed assets while allowing this profile.
 
 ## Failure behavior
 

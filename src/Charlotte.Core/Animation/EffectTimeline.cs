@@ -14,6 +14,8 @@ public sealed record EffectCue(
 public static class EffectTimeline
 {
     private const double SleepLifecycleMs=1900;
+    private const double BattleLifecycleMs=1690;
+    private const double VictoryLifecycleMs=1400;
 
     public static IReadOnlyList<EffectCue> Sample(AnimationId animation,TimeSpan elapsed)
     {
@@ -21,8 +23,8 @@ public static class EffectTimeline
         return animation switch
         {
             AnimationId.Sleep=>Sleep(milliseconds),
-            AnimationId.Battle when milliseconds<1400=>Battle(milliseconds/1400),
-            AnimationId.Victory when milliseconds<900=>Victory(milliseconds/900),
+            AnimationId.Battle when milliseconds<BattleLifecycleMs=>Battle(milliseconds/BattleLifecycleMs),
+            AnimationId.Victory when milliseconds<VictoryLifecycleMs=>Victory(milliseconds/VictoryLifecycleMs),
             AnimationId.DragStart when milliseconds<120=>[new(EffectKind.DragBubble,"!",166,88,Fade(milliseconds/120),.85+.2*milliseconds/120)],
             _=>[]
         };

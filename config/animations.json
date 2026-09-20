@@ -15,125 +15,125 @@
     "walkDelayMaximumMs": 40000,
     "walkDistanceMinimumDip": 24,
     "walkDistanceMaximumDip": 72,
-    "walkSpeedDipPerSecond": 24,
+    "walkSpeedDipPerSecond": 20,
     "idleStillRatio": 0.7
   },
   "clips": [
     {
       "id": "Idle", "loop": true, "interruptible": true, "returnTo": "Idle", "allowMirror": false, "overlayEffects": false,
       "frames": [
-        { "path": "character/formal-v1/idle/01.png", "durationMs": 250 },
-        { "path": "character/formal-v1/idle/02.png", "durationMs": 250 },
-        { "path": "character/formal-v1/idle/03.png", "durationMs": 250 },
-        { "path": "character/formal-v1/idle/04.png", "durationMs": 250 },
-        { "path": "character/formal-v1/idle/05.png", "durationMs": 250 },
-        { "path": "character/formal-v1/idle/06.png", "durationMs": 250 },
-        { "path": "character/formal-v1/idle/07.png", "durationMs": 250 },
-        { "path": "character/formal-v1/idle/08.png", "durationMs": 250 }
+        { "path": "character/formal-v1/idle/01.png", "durationMs": 280 },
+        { "path": "character/formal-v1/idle/02.png", "durationMs": 320 },
+        { "path": "character/formal-v1/idle/03.png", "durationMs": 360 },
+        { "path": "character/formal-v1/idle/04.png", "durationMs": 480 },
+        { "path": "character/formal-v1/idle/05.png", "durationMs": 360 },
+        { "path": "character/formal-v1/idle/06.png", "durationMs": 320 },
+        { "path": "character/formal-v1/idle/07.png", "durationMs": 280 },
+        { "path": "character/formal-v1/idle/08.png", "durationMs": 480 }
       ]
     },
     {
       "id": "Walk", "loop": true, "interruptible": true, "returnTo": "Idle", "allowMirror": false, "overlayEffects": false,
       "frames": [
-        { "path": "character/formal-v1/walk/01.png", "durationMs": 100 },
-        { "path": "character/formal-v1/walk/02.png", "durationMs": 100 },
-        { "path": "character/formal-v1/walk/03.png", "durationMs": 100 },
-        { "path": "character/formal-v1/walk/04.png", "durationMs": 100 },
-        { "path": "character/formal-v1/walk/05.png", "durationMs": 100 },
-        { "path": "character/formal-v1/walk/06.png", "durationMs": 100 },
-        { "path": "character/formal-v1/walk/07.png", "durationMs": 100 },
-        { "path": "character/formal-v1/walk/08.png", "durationMs": 100 }
+        { "path": "character/formal-v1/walk/01.png", "durationMs": 140 },
+        { "path": "character/formal-v1/walk/02.png", "durationMs": 140 },
+        { "path": "character/formal-v1/walk/03.png", "durationMs": 140 },
+        { "path": "character/formal-v1/walk/04.png", "durationMs": 140 },
+        { "path": "character/formal-v1/walk/05.png", "durationMs": 140 },
+        { "path": "character/formal-v1/walk/06.png", "durationMs": 140 },
+        { "path": "character/formal-v1/walk/07.png", "durationMs": 140 },
+        { "path": "character/formal-v1/walk/08.png", "durationMs": 140 }
       ]
     },
     {
       "id": "Rest", "loop": true, "interruptible": true, "returnTo": "Idle", "allowMirror": false, "overlayEffects": false,
       "frames": [
-        { "path": "character/formal-v1/rest/01.png", "durationMs": 250 },
-        { "path": "character/formal-v1/rest/02.png", "durationMs": 250 },
-        { "path": "character/formal-v1/rest/03.png", "durationMs": 250 },
-        { "path": "character/formal-v1/rest/04.png", "durationMs": 250 },
-        { "path": "character/formal-v1/rest/05.png", "durationMs": 250 },
-        { "path": "character/formal-v1/rest/06.png", "durationMs": 250 },
-        { "path": "character/formal-v1/rest/07.png", "durationMs": 250 },
-        { "path": "character/formal-v1/rest/08.png", "durationMs": 250 }
+        { "path": "character/formal-v1/rest/01.png", "durationMs": 320 },
+        { "path": "character/formal-v1/rest/02.png", "durationMs": 320 },
+        { "path": "character/formal-v1/rest/03.png", "durationMs": 320 },
+        { "path": "character/formal-v1/rest/04.png", "durationMs": 320 },
+        { "path": "character/formal-v1/rest/05.png", "durationMs": 320 },
+        { "path": "character/formal-v1/rest/06.png", "durationMs": 320 },
+        { "path": "character/formal-v1/rest/07.png", "durationMs": 320 },
+        { "path": "character/formal-v1/rest/08.png", "durationMs": 320 }
       ]
     },
     {
       "id": "SleepEnter", "loop": false, "interruptible": false, "returnTo": "Sleep", "allowMirror": false, "overlayEffects": false,
       "frames": [
-        { "path": "character/formal-v1/sleep-enter/01.png", "durationMs": 180 },
-        { "path": "character/formal-v1/sleep-enter/02.png", "durationMs": 180 },
-        { "path": "character/formal-v1/sleep-enter/03.png", "durationMs": 180 },
-        { "path": "character/formal-v1/sleep-enter/04.png", "durationMs": 180 },
-        { "path": "character/formal-v1/sleep-enter/05.png", "durationMs": 180 }
+        { "path": "character/formal-v1/sleep-enter/01.png", "durationMs": 220 },
+        { "path": "character/formal-v1/sleep-enter/02.png", "durationMs": 220 },
+        { "path": "character/formal-v1/sleep-enter/03.png", "durationMs": 220 },
+        { "path": "character/formal-v1/sleep-enter/04.png", "durationMs": 220 },
+        { "path": "character/formal-v1/sleep-enter/05.png", "durationMs": 220 }
       ]
     },
     {
       "id": "Sleep", "loop": true, "interruptible": true, "returnTo": "Sleep", "allowMirror": false, "overlayEffects": false,
       "frames": [
-        { "path": "character/formal-v1/sleep/01.png", "durationMs": 250 },
-        { "path": "character/formal-v1/sleep/02.png", "durationMs": 250 },
-        { "path": "character/formal-v1/sleep/03.png", "durationMs": 250 },
-        { "path": "character/formal-v1/sleep/04.png", "durationMs": 250 },
-        { "path": "character/formal-v1/sleep/05.png", "durationMs": 250 },
-        { "path": "character/formal-v1/sleep/06.png", "durationMs": 250 },
-        { "path": "character/formal-v1/sleep/07.png", "durationMs": 250 },
-        { "path": "character/formal-v1/sleep/08.png", "durationMs": 250 }
+        { "path": "character/formal-v1/sleep/01.png", "durationMs": 340 },
+        { "path": "character/formal-v1/sleep/02.png", "durationMs": 340 },
+        { "path": "character/formal-v1/sleep/03.png", "durationMs": 340 },
+        { "path": "character/formal-v1/sleep/04.png", "durationMs": 340 },
+        { "path": "character/formal-v1/sleep/05.png", "durationMs": 340 },
+        { "path": "character/formal-v1/sleep/06.png", "durationMs": 340 },
+        { "path": "character/formal-v1/sleep/07.png", "durationMs": 340 },
+        { "path": "character/formal-v1/sleep/08.png", "durationMs": 340 }
       ]
     },
     {
       "id": "SleepExit", "loop": false, "interruptible": false, "returnTo": "Idle", "allowMirror": false, "overlayEffects": false,
       "frames": [
-        { "path": "character/formal-v1/sleep-exit/01.png", "durationMs": 180 },
-        { "path": "character/formal-v1/sleep-exit/02.png", "durationMs": 180 },
-        { "path": "character/formal-v1/sleep-exit/03.png", "durationMs": 180 },
-        { "path": "character/formal-v1/sleep-exit/04.png", "durationMs": 180 },
-        { "path": "character/formal-v1/sleep-exit/05.png", "durationMs": 180 }
+        { "path": "character/formal-v1/sleep-exit/01.png", "durationMs": 220 },
+        { "path": "character/formal-v1/sleep-exit/02.png", "durationMs": 220 },
+        { "path": "character/formal-v1/sleep-exit/03.png", "durationMs": 220 },
+        { "path": "character/formal-v1/sleep-exit/04.png", "durationMs": 220 },
+        { "path": "character/formal-v1/sleep-exit/05.png", "durationMs": 220 }
       ]
     },
     {
       "id": "ClickSoft", "loop": false, "interruptible": true, "returnTo": "Idle", "allowMirror": false, "overlayEffects": true,
       "frames": [
-        { "path": "character/generated/click-soft/01.png", "durationMs": 70 },
-        { "path": "character/generated/click-soft/02.png", "durationMs": 70 },
-        { "path": "character/generated/click-soft/03.png", "durationMs": 70 },
-        { "path": "character/generated/click-soft/04.png", "durationMs": 70 },
-        { "path": "character/generated/click-soft/05.png", "durationMs": 70 },
-        { "path": "character/generated/click-soft/06.png", "durationMs": 70 },
-        { "path": "character/generated/click-soft/07.png", "durationMs": 70 },
-        { "path": "character/generated/click-soft/08.png", "durationMs": 70 }
+        { "path": "character/generated/click-soft/01.png", "durationMs": 100 },
+        { "path": "character/generated/click-soft/02.png", "durationMs": 100 },
+        { "path": "character/generated/click-soft/03.png", "durationMs": 100 },
+        { "path": "character/generated/click-soft/04.png", "durationMs": 100 },
+        { "path": "character/generated/click-soft/05.png", "durationMs": 100 },
+        { "path": "character/generated/click-soft/06.png", "durationMs": 100 },
+        { "path": "character/generated/click-soft/07.png", "durationMs": 100 },
+        { "path": "character/generated/click-soft/08.png", "durationMs": 100 }
       ]
     },
     {
       "id": "ClickAnnoyed", "loop": false, "interruptible": true, "returnTo": "Idle", "allowMirror": false, "overlayEffects": true,
       "frames": [
-        { "path": "character/generated/click-annoyed/01.png", "durationMs": 70 },
-        { "path": "character/generated/click-annoyed/02.png", "durationMs": 70 },
-        { "path": "character/generated/click-annoyed/03.png", "durationMs": 70 },
-        { "path": "character/generated/click-annoyed/04.png", "durationMs": 70 },
-        { "path": "character/generated/click-annoyed/05.png", "durationMs": 70 },
-        { "path": "character/generated/click-annoyed/06.png", "durationMs": 70 },
-        { "path": "character/generated/click-annoyed/07.png", "durationMs": 70 },
-        { "path": "character/generated/click-annoyed/08.png", "durationMs": 70 },
-        { "path": "character/generated/click-annoyed/09.png", "durationMs": 70 },
-        { "path": "character/generated/click-annoyed/10.png", "durationMs": 70 }
+        { "path": "character/generated/click-annoyed/01.png", "durationMs": 100 },
+        { "path": "character/generated/click-annoyed/02.png", "durationMs": 100 },
+        { "path": "character/generated/click-annoyed/03.png", "durationMs": 100 },
+        { "path": "character/generated/click-annoyed/04.png", "durationMs": 100 },
+        { "path": "character/generated/click-annoyed/05.png", "durationMs": 100 },
+        { "path": "character/generated/click-annoyed/06.png", "durationMs": 100 },
+        { "path": "character/generated/click-annoyed/07.png", "durationMs": 100 },
+        { "path": "character/generated/click-annoyed/08.png", "durationMs": 100 },
+        { "path": "character/generated/click-annoyed/09.png", "durationMs": 100 },
+        { "path": "character/generated/click-annoyed/10.png", "durationMs": 100 }
       ]
     },
     {
       "id": "ClickWarning", "loop": false, "interruptible": true, "returnTo": "Idle", "allowMirror": false, "overlayEffects": true,
       "frames": [
-        { "path": "character/generated/click-warning/01.png", "durationMs": 70 },
-        { "path": "character/generated/click-warning/02.png", "durationMs": 70 },
-        { "path": "character/generated/click-warning/03.png", "durationMs": 70 },
-        { "path": "character/generated/click-warning/04.png", "durationMs": 70 },
-        { "path": "character/generated/click-warning/05.png", "durationMs": 70 },
-        { "path": "character/generated/click-warning/06.png", "durationMs": 70 },
-        { "path": "character/generated/click-warning/07.png", "durationMs": 70 },
-        { "path": "character/generated/click-warning/08.png", "durationMs": 70 },
-        { "path": "character/generated/click-warning/09.png", "durationMs": 70 },
-        { "path": "character/generated/click-warning/10.png", "durationMs": 70 },
-        { "path": "character/generated/click-warning/11.png", "durationMs": 70 },
-        { "path": "character/generated/click-warning/12.png", "durationMs": 70 }
+        { "path": "character/generated/click-warning/01.png", "durationMs": 100 },
+        { "path": "character/generated/click-warning/02.png", "durationMs": 100 },
+        { "path": "character/generated/click-warning/03.png", "durationMs": 100 },
+        { "path": "character/generated/click-warning/04.png", "durationMs": 100 },
+        { "path": "character/generated/click-warning/05.png", "durationMs": 100 },
+        { "path": "character/generated/click-warning/06.png", "durationMs": 100 },
+        { "path": "character/generated/click-warning/07.png", "durationMs": 100 },
+        { "path": "character/generated/click-warning/08.png", "durationMs": 100 },
+        { "path": "character/generated/click-warning/09.png", "durationMs": 100 },
+        { "path": "character/generated/click-warning/10.png", "durationMs": 100 },
+        { "path": "character/generated/click-warning/11.png", "durationMs": 100 },
+        { "path": "character/generated/click-warning/12.png", "durationMs": 100 }
       ]
     },
     {
@@ -166,34 +166,34 @@
     {
       "id": "Battle", "loop": false, "interruptible": false, "returnTo": "Idle", "allowMirror": false, "overlayEffects": false,
       "frames": [
-        { "path": "character/formal-v1/battle/01.png", "durationMs": 100 },
-        { "path": "character/formal-v1/battle/02.png", "durationMs": 100 },
-        { "path": "character/formal-v1/battle/03.png", "durationMs": 100 },
-        { "path": "character/formal-v1/battle/04.png", "durationMs": 100 },
-        { "path": "character/formal-v1/battle/05.png", "durationMs": 100 },
-        { "path": "character/formal-v1/battle/06.png", "durationMs": 100 },
-        { "path": "character/formal-v1/battle/07.png", "durationMs": 100 },
-        { "path": "character/formal-v1/battle/08.png", "durationMs": 100 },
-        { "path": "character/formal-v1/battle/09.png", "durationMs": 100 },
-        { "path": "character/formal-v1/battle/10.png", "durationMs": 100 },
-        { "path": "character/formal-v1/battle/11.png", "durationMs": 100 },
-        { "path": "character/formal-v1/battle/12.png", "durationMs": 100 },
-        { "path": "character/formal-v1/battle/13.png", "durationMs": 100 }
+        { "path": "character/formal-v1/battle/01.png", "durationMs": 130 },
+        { "path": "character/formal-v1/battle/02.png", "durationMs": 130 },
+        { "path": "character/formal-v1/battle/03.png", "durationMs": 130 },
+        { "path": "character/formal-v1/battle/04.png", "durationMs": 130 },
+        { "path": "character/formal-v1/battle/05.png", "durationMs": 130 },
+        { "path": "character/formal-v1/battle/06.png", "durationMs": 130 },
+        { "path": "character/formal-v1/battle/07.png", "durationMs": 130 },
+        { "path": "character/formal-v1/battle/08.png", "durationMs": 130 },
+        { "path": "character/formal-v1/battle/09.png", "durationMs": 130 },
+        { "path": "character/formal-v1/battle/10.png", "durationMs": 130 },
+        { "path": "character/formal-v1/battle/11.png", "durationMs": 130 },
+        { "path": "character/formal-v1/battle/12.png", "durationMs": 130 },
+        { "path": "character/formal-v1/battle/13.png", "durationMs": 130 }
       ]
     },
     {
       "id": "Victory", "loop": false, "interruptible": false, "returnTo": "Idle", "allowMirror": false, "overlayEffects": false,
       "frames": [
-        { "path": "character/formal-v1/victory/01.png", "durationMs": 90 },
-        { "path": "character/formal-v1/victory/02.png", "durationMs": 90 },
-        { "path": "character/formal-v1/victory/03.png", "durationMs": 90 },
-        { "path": "character/formal-v1/victory/04.png", "durationMs": 90 },
-        { "path": "character/formal-v1/victory/05.png", "durationMs": 90 },
-        { "path": "character/formal-v1/victory/06.png", "durationMs": 90 },
-        { "path": "character/formal-v1/victory/07.png", "durationMs": 90 },
-        { "path": "character/formal-v1/victory/08.png", "durationMs": 90 },
-        { "path": "character/formal-v1/victory/09.png", "durationMs": 90 },
-        { "path": "character/formal-v1/victory/10.png", "durationMs": 90 }
+        { "path": "character/formal-v1/victory/01.png", "durationMs": 140 },
+        { "path": "character/formal-v1/victory/02.png", "durationMs": 140 },
+        { "path": "character/formal-v1/victory/03.png", "durationMs": 140 },
+        { "path": "character/formal-v1/victory/04.png", "durationMs": 140 },
+        { "path": "character/formal-v1/victory/05.png", "durationMs": 140 },
+        { "path": "character/formal-v1/victory/06.png", "durationMs": 140 },
+        { "path": "character/formal-v1/victory/07.png", "durationMs": 140 },
+        { "path": "character/formal-v1/victory/08.png", "durationMs": 140 },
+        { "path": "character/formal-v1/victory/09.png", "durationMs": 140 },
+        { "path": "character/formal-v1/victory/10.png", "durationMs": 140 }
       ]
     }
   ],

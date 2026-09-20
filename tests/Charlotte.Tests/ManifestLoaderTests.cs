@@ -18,15 +18,36 @@ public class ManifestLoaderTests
         Assert.Equal(4,assets.Catalog.Get(AnimationId.DragStart).Frames.Count);
         Assert.Equal(4,assets.Catalog.Get(AnimationId.DragHold).Frames.Count);
         Assert.Equal(4,assets.Catalog.Get(AnimationId.DragRelease).Frames.Count);
-        Assert.Equal(TimeSpan.FromMilliseconds(900),assets.Catalog.Get(AnimationId.Victory).Duration);
+        Assert.Equal(TimeSpan.FromMilliseconds(1400),assets.Catalog.Get(AnimationId.Victory).Duration);
         Assert.Equal(540,assets.FootAnchor.Y);
         Assert.Equal("hybrid",assets.AssetStage);
         Assert.False(assets.Catalog.Get(AnimationId.Battle).OverlayEffects);
         Assert.True(assets.Catalog.Get(AnimationId.ClickSoft).OverlayEffects);
         Assert.Equal(TimeSpan.FromSeconds(20),assets.Behavior.WalkDelayMinimum);
         Assert.Equal(TimeSpan.FromSeconds(40),assets.Behavior.WalkDelayMaximum);
-        Assert.Equal(24,assets.Behavior.WalkSpeedDipPerSecond);
+        Assert.Equal(20,assets.Behavior.WalkSpeedDipPerSecond);
         Assert.Equal(.7,assets.Behavior.IdleStillRatio);
+    }
+
+    [Fact]
+    public void Project_manifest_uses_calm_motion_timing_profile()
+    {
+        var root=FindProjectRoot();
+        var assets=ManifestLoader.Load(Path.Combine(root,"assets"),Path.Combine(root,"config","animations.json"));
+
+        Assert.Equal([280,320,360,480,360,320,280,480],
+            assets.Catalog.Get(AnimationId.Idle).Frames.Select(x=>x.DurationMs));
+        Assert.All(assets.Catalog.Get(AnimationId.Rest).Frames,x=>Assert.InRange(x.DurationMs,300,350));
+        Assert.All(assets.Catalog.Get(AnimationId.Sleep).Frames,x=>Assert.InRange(x.DurationMs,300,350));
+        Assert.All(assets.Catalog.Get(AnimationId.Walk).Frames,x=>Assert.InRange(x.DurationMs,125,150));
+        Assert.All(assets.Catalog.Get(AnimationId.ClickSoft).Frames,x=>Assert.InRange(x.DurationMs,100,111));
+        Assert.All(assets.Catalog.Get(AnimationId.ClickAnnoyed).Frames,x=>Assert.InRange(x.DurationMs,100,111));
+        Assert.All(assets.Catalog.Get(AnimationId.ClickWarning).Frames,x=>Assert.InRange(x.DurationMs,100,111));
+        Assert.All(assets.Catalog.Get(AnimationId.Battle).Frames,x=>Assert.InRange(x.DurationMs,125,143));
+        Assert.All(assets.Catalog.Get(AnimationId.Victory).Frames,x=>Assert.InRange(x.DurationMs,140,150));
+        Assert.All(assets.Catalog.Get(AnimationId.SleepEnter).Frames,x=>Assert.InRange(x.DurationMs,200,225));
+        Assert.All(assets.Catalog.Get(AnimationId.SleepExit).Frames,x=>Assert.InRange(x.DurationMs,200,225));
+        Assert.Equal(20,assets.Behavior.WalkSpeedDipPerSecond);
     }
 
     [Fact]
@@ -109,7 +130,7 @@ public class ManifestLoaderTests
     {
         var root=FindProjectRoot();
         var source=File.ReadAllText(Path.Combine(root,"config","animations.json"));
-        var manifest=WriteManifest(root,source.Replace("\"walkSpeedDipPerSecond\": 24","\"walkSpeedDipPerSecond\": 0"));
+        var manifest=WriteManifest(root,source.Replace("\"walkSpeedDipPerSecond\": 20","\"walkSpeedDipPerSecond\": 0"));
         try
         {
             Assert.Throws<InvalidDataException>(()=>ManifestLoader.Load(Path.Combine(root,"assets"),manifest));

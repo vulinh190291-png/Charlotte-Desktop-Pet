@@ -37,6 +37,15 @@ public class EffectTimelineTests
     }
 
     [Fact]
+    public void Battle_and_victory_effects_follow_the_calm_clip_duration()
+    {
+        Assert.NotEmpty(EffectTimeline.Sample(AnimationId.Battle,TimeSpan.FromMilliseconds(1500)));
+        Assert.Empty(EffectTimeline.Sample(AnimationId.Battle,TimeSpan.FromMilliseconds(1690)));
+        Assert.NotEmpty(EffectTimeline.Sample(AnimationId.Victory,TimeSpan.FromMilliseconds(1000)));
+        Assert.Empty(EffectTimeline.Sample(AnimationId.Victory,TimeSpan.FromMilliseconds(1400)));
+    }
+
+    [Fact]
     public void Idle_has_no_separate_effect_layer()
         => Assert.Empty(EffectTimeline.Sample(AnimationId.Idle,TimeSpan.FromSeconds(1)));
 

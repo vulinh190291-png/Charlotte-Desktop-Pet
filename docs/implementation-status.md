@@ -2,6 +2,11 @@
 
 分支：feat/charlotte-mvp。所有修改留在用户指定 Charlotte 目录内。
 
+## 2026-09-20
+
+- 动画播放采用用户确认的“沉稳优雅”节奏：Idle 由固定 250ms 改为带 280–480ms 关键帧停顿的 2.88 秒循环；Rest/Sleep 约 3 FPS；Walk/Battle/Victory 约 7–8 FPS；Click 为 10 FPS；Sleep 进出为约 4.5 FPS；拖拽保持原速以保证跟手。
+- 自动 Walk 位移速度由 24 降为 20 DIP/s，并同步更新 Battle/Victory 的合法总时长区间与兼容特效时间轴；新增真实项目清单和特效边界测试，防止后续发布意外恢复为过快节奏或提前结束特效。
+
 ## 2026-09-19
 
 - 用户确认 `Charlotte_Animation_Implementation_Notes.docx` 覆盖旧动画冲突规则。

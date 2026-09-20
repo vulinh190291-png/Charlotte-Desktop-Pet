@@ -88,7 +88,7 @@ public static class AssetValidator
                 issues.Add(new("unsafe-path",$"{frame.Path} 不在资源根目录内。"));
         }
         var duration=frames.Sum(x=>(long)x.DurationMs);
-        if ((id==AnimationId.Battle && duration is <1100 or >1500) || (id==AnimationId.Victory && duration is <800 or >1100))
+        if ((id==AnimationId.Battle && duration is <1500 or >1900) || (id==AnimationId.Victory && duration is <1200 or >1600))
             issues.Add(new("total-duration",$"{id} 总时长不符合约束。"));
         return issues;
     }
