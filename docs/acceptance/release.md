@@ -25,7 +25,7 @@
 - 全屏候选策略自动回归覆盖整屏、仅工作区、隐藏、最小化、Shell/自身排除；运行时已接入前台 WinEvent 与 500ms 兜底轮询。
 - 退出与恢复自动回归覆盖待写保存阻塞、重复退出、Flush 异常终结、新意图冻结、3×2MiB 日志轮换、未处理异常紧急保存及当前/备份双损坏。
 - `scripts/test-ground-baseline.ps1` 启动真实发布程序并验证可见 Idle 脚底与当前显示器工作区底边重合；本机 144 DPI 结果为 885 = 885。
-- “沉稳优雅”节奏清单通过真实项目加载回归：Idle 2.88 秒且包含关键帧停顿，Rest 320ms/帧，Sleep 340ms/帧，Sleep 进出 220ms/帧，Battle 130ms/帧，Victory 140ms/帧；拖拽节奏保持不变，兼容程序特效层的截止时间也与 Battle/Victory 新总时长一致。
+- 二次降速清单通过真实项目加载回归：所有保留 clip 的帧停留时间在上一版基础上乘以 1.5；Idle 4.32 秒且包含 420–720ms 关键帧停顿，Rest 480ms/帧，Sleep 510ms/帧，Sleep 进出 330ms/帧，Drag 180/180/210ms/帧，Battle 195ms/帧，Victory 210ms/帧；兼容程序特效层截止时间与 Battle 2.535 秒、Victory 2.10 秒一致。
 - Walk 与 ClickSoft/ClickAnnoyed/ClickWarning 已从当前清单和面板退出；自动 Walk 关闭，`generated/` 与 formal-v1 Walk 帧不存在。左键点击的唤醒与闲置计时重置由调度测试覆盖。
 
 ## 尚未宣称通过

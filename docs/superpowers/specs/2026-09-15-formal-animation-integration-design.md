@@ -8,6 +8,8 @@ The user confirmed on 2026-09-20 that runtime playback should use the calmer tim
 
 The user subsequently confirmed on 2026-09-20 that Walk and all three Click animations must be retired, together with the legacy `generated/` directory. Click input remains an interaction signal, while automatic walking and the panel Walk command are disabled.
 
+The user then selected an additional approximately 50% slowdown for every retained clip. The implementation applies this deterministically by multiplying the preceding per-frame holds by 1.5.
+
 ## Goal
 
 Deploy the retained Charlotte PNG sequences without modifying the source reference folder, while preserving the existing 480x600 logical canvas, 240x300 DIP window, scheduler priority rules, and non-animation click behavior.
@@ -31,10 +33,10 @@ Deploy the retained Charlotte PNG sequences without modifying the source referen
 - Battle contains 13 frames, remains uninterruptible, and returns to Idle.
 - Each clip declares whether programmatic overlay effects are enabled. Formal Sleep, Drag, Battle, and Victory frames use baked effects and therefore disable overlays.
 - The manifest reports a `formal` asset stage and contains no Walk or Click clips.
-- Idle uses per-frame holds of 280/320/360/480/360/320/280/480 ms so the pose has deliberate pauses instead of mechanical constant-rate playback.
-- Rest uses 320 ms per frame; Sleep uses 340 ms per frame; SleepEnter and SleepExit use 220 ms per frame.
-- Battle uses 130 ms per frame and Victory uses 140 ms per frame. Drag timing remains unchanged to preserve direct manipulation feedback.
-- Validation accepts Battle totals from 1500–1900 ms and Victory totals from 1200–1600 ms, retaining protection against clearly mistimed assets while allowing this profile.
+- Idle uses per-frame holds of 420/480/540/720/540/480/420/720 ms, producing a 4.32-second loop with deliberate pauses.
+- Rest uses 480 ms per frame; Sleep uses 510 ms per frame; SleepEnter and SleepExit use 330 ms per frame.
+- DragStart and DragHold use 180 ms per frame, DragRelease uses 210 ms, Battle uses 195 ms, and Victory uses 210 ms. Pointer movement during drag remains real-time.
+- Validation accepts Battle totals from 2300–2800 ms and Victory totals from 1800–2300 ms, retaining protection against clearly mistimed assets while allowing the 2.535/2.10-second clips.
 
 ## Failure behavior
 

@@ -14,8 +14,8 @@ public sealed record EffectCue(
 public static class EffectTimeline
 {
     private const double SleepLifecycleMs=1900;
-    private const double BattleLifecycleMs=1690;
-    private const double VictoryLifecycleMs=1400;
+    private const double BattleLifecycleMs=2535;
+    private const double VictoryLifecycleMs=2100;
 
     public static IReadOnlyList<EffectCue> Sample(AnimationId animation,TimeSpan elapsed)
     {

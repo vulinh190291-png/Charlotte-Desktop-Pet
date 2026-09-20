@@ -18,7 +18,7 @@ public class ManifestLoaderTests
         Assert.Equal(4,assets.Catalog.Get(AnimationId.DragStart).Frames.Count);
         Assert.Equal(4,assets.Catalog.Get(AnimationId.DragHold).Frames.Count);
         Assert.Equal(4,assets.Catalog.Get(AnimationId.DragRelease).Frames.Count);
-        Assert.Equal(TimeSpan.FromMilliseconds(1400),assets.Catalog.Get(AnimationId.Victory).Duration);
+        Assert.Equal(TimeSpan.FromMilliseconds(2100),assets.Catalog.Get(AnimationId.Victory).Duration);
         Assert.Equal(540,assets.FootAnchor.Y);
         Assert.Equal("formal",assets.AssetStage);
         Assert.False(assets.Catalog.Get(AnimationId.Battle).OverlayEffects);
@@ -36,14 +36,17 @@ public class ManifestLoaderTests
         var root=FindProjectRoot();
         var assets=ManifestLoader.Load(Path.Combine(root,"assets"),Path.Combine(root,"config","animations.json"));
 
-        Assert.Equal([280,320,360,480,360,320,280,480],
+        Assert.Equal([420,480,540,720,540,480,420,720],
             assets.Catalog.Get(AnimationId.Idle).Frames.Select(x=>x.DurationMs));
-        Assert.All(assets.Catalog.Get(AnimationId.Rest).Frames,x=>Assert.InRange(x.DurationMs,300,350));
-        Assert.All(assets.Catalog.Get(AnimationId.Sleep).Frames,x=>Assert.InRange(x.DurationMs,300,350));
-        Assert.All(assets.Catalog.Get(AnimationId.Battle).Frames,x=>Assert.InRange(x.DurationMs,125,143));
-        Assert.All(assets.Catalog.Get(AnimationId.Victory).Frames,x=>Assert.InRange(x.DurationMs,140,150));
-        Assert.All(assets.Catalog.Get(AnimationId.SleepEnter).Frames,x=>Assert.InRange(x.DurationMs,200,225));
-        Assert.All(assets.Catalog.Get(AnimationId.SleepExit).Frames,x=>Assert.InRange(x.DurationMs,200,225));
+        Assert.All(assets.Catalog.Get(AnimationId.Rest).Frames,x=>Assert.Equal(480,x.DurationMs));
+        Assert.All(assets.Catalog.Get(AnimationId.Sleep).Frames,x=>Assert.Equal(510,x.DurationMs));
+        Assert.All(assets.Catalog.Get(AnimationId.SleepEnter).Frames,x=>Assert.Equal(330,x.DurationMs));
+        Assert.All(assets.Catalog.Get(AnimationId.SleepExit).Frames,x=>Assert.Equal(330,x.DurationMs));
+        Assert.All(assets.Catalog.Get(AnimationId.DragStart).Frames,x=>Assert.Equal(180,x.DurationMs));
+        Assert.All(assets.Catalog.Get(AnimationId.DragHold).Frames,x=>Assert.Equal(180,x.DurationMs));
+        Assert.All(assets.Catalog.Get(AnimationId.DragRelease).Frames,x=>Assert.Equal(210,x.DurationMs));
+        Assert.All(assets.Catalog.Get(AnimationId.Battle).Frames,x=>Assert.Equal(195,x.DurationMs));
+        Assert.All(assets.Catalog.Get(AnimationId.Victory).Frames,x=>Assert.Equal(210,x.DurationMs));
         Assert.False(Directory.Exists(Path.Combine(root,"assets","character","generated")));
         Assert.False(Directory.Exists(Path.Combine(root,"assets","character","formal-v1","walk")));
     }

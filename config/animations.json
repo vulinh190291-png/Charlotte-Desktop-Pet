@@ -22,120 +22,120 @@
     {
       "id": "Idle", "loop": true, "interruptible": true, "returnTo": "Idle", "allowMirror": false, "overlayEffects": false,
       "frames": [
-        { "path": "character/formal-v1/idle/01.png", "durationMs": 280 },
-        { "path": "character/formal-v1/idle/02.png", "durationMs": 320 },
-        { "path": "character/formal-v1/idle/03.png", "durationMs": 360 },
-        { "path": "character/formal-v1/idle/04.png", "durationMs": 480 },
-        { "path": "character/formal-v1/idle/05.png", "durationMs": 360 },
-        { "path": "character/formal-v1/idle/06.png", "durationMs": 320 },
-        { "path": "character/formal-v1/idle/07.png", "durationMs": 280 },
-        { "path": "character/formal-v1/idle/08.png", "durationMs": 480 }
+        { "path": "character/formal-v1/idle/01.png", "durationMs": 420 },
+        { "path": "character/formal-v1/idle/02.png", "durationMs": 480 },
+        { "path": "character/formal-v1/idle/03.png", "durationMs": 540 },
+        { "path": "character/formal-v1/idle/04.png", "durationMs": 720 },
+        { "path": "character/formal-v1/idle/05.png", "durationMs": 540 },
+        { "path": "character/formal-v1/idle/06.png", "durationMs": 480 },
+        { "path": "character/formal-v1/idle/07.png", "durationMs": 420 },
+        { "path": "character/formal-v1/idle/08.png", "durationMs": 720 }
       ]
     },
     {
       "id": "Rest", "loop": true, "interruptible": true, "returnTo": "Idle", "allowMirror": false, "overlayEffects": false,
       "frames": [
-        { "path": "character/formal-v1/rest/01.png", "durationMs": 320 },
-        { "path": "character/formal-v1/rest/02.png", "durationMs": 320 },
-        { "path": "character/formal-v1/rest/03.png", "durationMs": 320 },
-        { "path": "character/formal-v1/rest/04.png", "durationMs": 320 },
-        { "path": "character/formal-v1/rest/05.png", "durationMs": 320 },
-        { "path": "character/formal-v1/rest/06.png", "durationMs": 320 },
-        { "path": "character/formal-v1/rest/07.png", "durationMs": 320 },
-        { "path": "character/formal-v1/rest/08.png", "durationMs": 320 }
+        { "path": "character/formal-v1/rest/01.png", "durationMs": 480 },
+        { "path": "character/formal-v1/rest/02.png", "durationMs": 480 },
+        { "path": "character/formal-v1/rest/03.png", "durationMs": 480 },
+        { "path": "character/formal-v1/rest/04.png", "durationMs": 480 },
+        { "path": "character/formal-v1/rest/05.png", "durationMs": 480 },
+        { "path": "character/formal-v1/rest/06.png", "durationMs": 480 },
+        { "path": "character/formal-v1/rest/07.png", "durationMs": 480 },
+        { "path": "character/formal-v1/rest/08.png", "durationMs": 480 }
       ]
     },
     {
       "id": "SleepEnter", "loop": false, "interruptible": false, "returnTo": "Sleep", "allowMirror": false, "overlayEffects": false,
       "frames": [
-        { "path": "character/formal-v1/sleep-enter/01.png", "durationMs": 220 },
-        { "path": "character/formal-v1/sleep-enter/02.png", "durationMs": 220 },
-        { "path": "character/formal-v1/sleep-enter/03.png", "durationMs": 220 },
-        { "path": "character/formal-v1/sleep-enter/04.png", "durationMs": 220 },
-        { "path": "character/formal-v1/sleep-enter/05.png", "durationMs": 220 }
+        { "path": "character/formal-v1/sleep-enter/01.png", "durationMs": 330 },
+        { "path": "character/formal-v1/sleep-enter/02.png", "durationMs": 330 },
+        { "path": "character/formal-v1/sleep-enter/03.png", "durationMs": 330 },
+        { "path": "character/formal-v1/sleep-enter/04.png", "durationMs": 330 },
+        { "path": "character/formal-v1/sleep-enter/05.png", "durationMs": 330 }
       ]
     },
     {
       "id": "Sleep", "loop": true, "interruptible": true, "returnTo": "Sleep", "allowMirror": false, "overlayEffects": false,
       "frames": [
-        { "path": "character/formal-v1/sleep/01.png", "durationMs": 340 },
-        { "path": "character/formal-v1/sleep/02.png", "durationMs": 340 },
-        { "path": "character/formal-v1/sleep/03.png", "durationMs": 340 },
-        { "path": "character/formal-v1/sleep/04.png", "durationMs": 340 },
-        { "path": "character/formal-v1/sleep/05.png", "durationMs": 340 },
-        { "path": "character/formal-v1/sleep/06.png", "durationMs": 340 },
-        { "path": "character/formal-v1/sleep/07.png", "durationMs": 340 },
-        { "path": "character/formal-v1/sleep/08.png", "durationMs": 340 }
+        { "path": "character/formal-v1/sleep/01.png", "durationMs": 510 },
+        { "path": "character/formal-v1/sleep/02.png", "durationMs": 510 },
+        { "path": "character/formal-v1/sleep/03.png", "durationMs": 510 },
+        { "path": "character/formal-v1/sleep/04.png", "durationMs": 510 },
+        { "path": "character/formal-v1/sleep/05.png", "durationMs": 510 },
+        { "path": "character/formal-v1/sleep/06.png", "durationMs": 510 },
+        { "path": "character/formal-v1/sleep/07.png", "durationMs": 510 },
+        { "path": "character/formal-v1/sleep/08.png", "durationMs": 510 }
       ]
     },
     {
       "id": "SleepExit", "loop": false, "interruptible": false, "returnTo": "Idle", "allowMirror": false, "overlayEffects": false,
       "frames": [
-        { "path": "character/formal-v1/sleep-exit/01.png", "durationMs": 220 },
-        { "path": "character/formal-v1/sleep-exit/02.png", "durationMs": 220 },
-        { "path": "character/formal-v1/sleep-exit/03.png", "durationMs": 220 },
-        { "path": "character/formal-v1/sleep-exit/04.png", "durationMs": 220 },
-        { "path": "character/formal-v1/sleep-exit/05.png", "durationMs": 220 }
+        { "path": "character/formal-v1/sleep-exit/01.png", "durationMs": 330 },
+        { "path": "character/formal-v1/sleep-exit/02.png", "durationMs": 330 },
+        { "path": "character/formal-v1/sleep-exit/03.png", "durationMs": 330 },
+        { "path": "character/formal-v1/sleep-exit/04.png", "durationMs": 330 },
+        { "path": "character/formal-v1/sleep-exit/05.png", "durationMs": 330 }
       ]
     },
     {
       "id": "DragStart", "loop": false, "interruptible": false, "returnTo": "DragHold", "allowMirror": false, "overlayEffects": false,
       "frames": [
-        { "path": "character/formal-v1/drag-start/01.png", "durationMs": 120 },
-        { "path": "character/formal-v1/drag-start/02.png", "durationMs": 120 },
-        { "path": "character/formal-v1/drag-start/03.png", "durationMs": 120 },
-        { "path": "character/formal-v1/drag-start/04.png", "durationMs": 120 }
+        { "path": "character/formal-v1/drag-start/01.png", "durationMs": 180 },
+        { "path": "character/formal-v1/drag-start/02.png", "durationMs": 180 },
+        { "path": "character/formal-v1/drag-start/03.png", "durationMs": 180 },
+        { "path": "character/formal-v1/drag-start/04.png", "durationMs": 180 }
       ]
     },
     {
       "id": "DragHold", "loop": true, "interruptible": false, "returnTo": "DragHold", "allowMirror": false, "overlayEffects": false,
       "frames": [
-        { "path": "character/formal-v1/drag-hold/01.png", "durationMs": 120 },
-        { "path": "character/formal-v1/drag-hold/02.png", "durationMs": 120 },
-        { "path": "character/formal-v1/drag-hold/03.png", "durationMs": 120 },
-        { "path": "character/formal-v1/drag-hold/04.png", "durationMs": 120 }
+        { "path": "character/formal-v1/drag-hold/01.png", "durationMs": 180 },
+        { "path": "character/formal-v1/drag-hold/02.png", "durationMs": 180 },
+        { "path": "character/formal-v1/drag-hold/03.png", "durationMs": 180 },
+        { "path": "character/formal-v1/drag-hold/04.png", "durationMs": 180 }
       ]
     },
     {
       "id": "DragRelease", "loop": false, "interruptible": false, "returnTo": "Idle", "allowMirror": false, "overlayEffects": false,
       "frames": [
-        { "path": "character/formal-v1/drag-release/01.png", "durationMs": 140 },
-        { "path": "character/formal-v1/drag-release/02.png", "durationMs": 140 },
-        { "path": "character/formal-v1/drag-release/03.png", "durationMs": 140 },
-        { "path": "character/formal-v1/drag-release/04.png", "durationMs": 140 }
+        { "path": "character/formal-v1/drag-release/01.png", "durationMs": 210 },
+        { "path": "character/formal-v1/drag-release/02.png", "durationMs": 210 },
+        { "path": "character/formal-v1/drag-release/03.png", "durationMs": 210 },
+        { "path": "character/formal-v1/drag-release/04.png", "durationMs": 210 }
       ]
     },
     {
       "id": "Battle", "loop": false, "interruptible": false, "returnTo": "Idle", "allowMirror": false, "overlayEffects": false,
       "frames": [
-        { "path": "character/formal-v1/battle/01.png", "durationMs": 130 },
-        { "path": "character/formal-v1/battle/02.png", "durationMs": 130 },
-        { "path": "character/formal-v1/battle/03.png", "durationMs": 130 },
-        { "path": "character/formal-v1/battle/04.png", "durationMs": 130 },
-        { "path": "character/formal-v1/battle/05.png", "durationMs": 130 },
-        { "path": "character/formal-v1/battle/06.png", "durationMs": 130 },
-        { "path": "character/formal-v1/battle/07.png", "durationMs": 130 },
-        { "path": "character/formal-v1/battle/08.png", "durationMs": 130 },
-        { "path": "character/formal-v1/battle/09.png", "durationMs": 130 },
-        { "path": "character/formal-v1/battle/10.png", "durationMs": 130 },
-        { "path": "character/formal-v1/battle/11.png", "durationMs": 130 },
-        { "path": "character/formal-v1/battle/12.png", "durationMs": 130 },
-        { "path": "character/formal-v1/battle/13.png", "durationMs": 130 }
+        { "path": "character/formal-v1/battle/01.png", "durationMs": 195 },
+        { "path": "character/formal-v1/battle/02.png", "durationMs": 195 },
+        { "path": "character/formal-v1/battle/03.png", "durationMs": 195 },
+        { "path": "character/formal-v1/battle/04.png", "durationMs": 195 },
+        { "path": "character/formal-v1/battle/05.png", "durationMs": 195 },
+        { "path": "character/formal-v1/battle/06.png", "durationMs": 195 },
+        { "path": "character/formal-v1/battle/07.png", "durationMs": 195 },
+        { "path": "character/formal-v1/battle/08.png", "durationMs": 195 },
+        { "path": "character/formal-v1/battle/09.png", "durationMs": 195 },
+        { "path": "character/formal-v1/battle/10.png", "durationMs": 195 },
+        { "path": "character/formal-v1/battle/11.png", "durationMs": 195 },
+        { "path": "character/formal-v1/battle/12.png", "durationMs": 195 },
+        { "path": "character/formal-v1/battle/13.png", "durationMs": 195 }
       ]
     },
     {
       "id": "Victory", "loop": false, "interruptible": false, "returnTo": "Idle", "allowMirror": false, "overlayEffects": false,
       "frames": [
-        { "path": "character/formal-v1/victory/01.png", "durationMs": 140 },
-        { "path": "character/formal-v1/victory/02.png", "durationMs": 140 },
-        { "path": "character/formal-v1/victory/03.png", "durationMs": 140 },
-        { "path": "character/formal-v1/victory/04.png", "durationMs": 140 },
-        { "path": "character/formal-v1/victory/05.png", "durationMs": 140 },
-        { "path": "character/formal-v1/victory/06.png", "durationMs": 140 },
-        { "path": "character/formal-v1/victory/07.png", "durationMs": 140 },
-        { "path": "character/formal-v1/victory/08.png", "durationMs": 140 },
-        { "path": "character/formal-v1/victory/09.png", "durationMs": 140 },
-        { "path": "character/formal-v1/victory/10.png", "durationMs": 140 }
+        { "path": "character/formal-v1/victory/01.png", "durationMs": 210 },
+        { "path": "character/formal-v1/victory/02.png", "durationMs": 210 },
+        { "path": "character/formal-v1/victory/03.png", "durationMs": 210 },
+        { "path": "character/formal-v1/victory/04.png", "durationMs": 210 },
+        { "path": "character/formal-v1/victory/05.png", "durationMs": 210 },
+        { "path": "character/formal-v1/victory/06.png", "durationMs": 210 },
+        { "path": "character/formal-v1/victory/07.png", "durationMs": 210 },
+        { "path": "character/formal-v1/victory/08.png", "durationMs": 210 },
+        { "path": "character/formal-v1/victory/09.png", "durationMs": 210 },
+        { "path": "character/formal-v1/victory/10.png", "durationMs": 210 }
       ]
     }
   ],
